@@ -1,5 +1,6 @@
 "use client";
- 
+ import Link from "next/link";
+import React from "react";
 export default function Footer({ setView }) {
   const currentYear = new Date().getFullYear();
  
@@ -9,21 +10,21 @@ export default function Footer({ setView }) {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
          
           <div className="flex flex-col items-center md:items-start">
-            <button onClick={() => setView("home")} className="font-bold text-xl tracking-tight">
+            <Link href="/" className="font-bold text-xl tracking-tight">
               Project <span className="text-blue-500">Games</span>
-            </button>
+            </Link>
             <p className="text-sm opacity-60 mt-2">Tu biblioteca de juegos favorita.</p>
           </div>
- 
+
           <div className="flex gap-8 text-sm">
             {/* Estos botones ahora cambian la vista en el page.js */}
 
-            <button onClick={() => setView("about")} className="opacity-70 hover:opacity-100 transition-opacity">
+            <Link href="/about" className="opacity-70 hover:opacity-100 transition-opacity">
               Sobre nosotros
-            </button>
-            <button onClick={() => setView("privacy")} className="opacity-70 hover:opacity-100 transition-opacity">
+            </Link>
+            <Link href="/privacy" className="opacity-70 hover:opacity-100 transition-opacity">
               Privacidad
-            </button>
+            </Link>
           </div>
  
           <div className="flex gap-4">

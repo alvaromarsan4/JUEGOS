@@ -4,7 +4,8 @@ import { useState } from "react";
 import Filters from "@/components/Filters";
 import GameCard from "@/components/GameCard";
 import Footer from "@/components/Footer"; // Importamos EL footer de arriba
- 
+ import About from '@/components/About'; // Ajusta la ruta según tu carpeta
+import Privacy from '@/components/Privacy';
 export default function HomePage() {
   const [view, setView] = useState("home");
  
@@ -39,25 +40,8 @@ export default function HomePage() {
       </div>
     </div>
  
-        {/* --- VISTA SOBRE NOSOTROS --- */}
-        {view === "about" && (
-          <section className="py-12">
-            <h2 className="text-3xl font-bold mb-6">Sobre Nosotros</h2>
-            <p className="text-slate-300">Somos un equipo apasionado por los videojuegos gratuitos...</p>
-          </section>
-        )}
- 
-        {/* --- VISTA PRIVACIDAD --- */}
-        {view === "privacy" && (
-          <section className="py-12">
-            <h2 className="text-3xl font-bold mb-6">Privacidad</h2>
-            <p className="text-slate-300">No guardamos datos personales de forma indebida.</p>
-          </section>
-        )}
       </main>
- 
-      {/* Le pasamos la función setView al Footer para que los botones funcionen */}
-      <Footer setView={setView} />
+
     </div>
   );
 }

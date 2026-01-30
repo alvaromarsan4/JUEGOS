@@ -1,12 +1,15 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+//const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = "http://localhost:8000/api";
+const BASE_URL = "http://localhost:8000";
 /**
  * Obtener listado de juegos con filtros
  */
 export async function getGames(filters = {}) {
   const params = new URLSearchParams(filters).toString();
-
-  const response = await fetch(`${API_URL}/games?${params}`);
+console.log("Llamando a:", `${API_URL}/games?${params}`);
+const response = await fetch(`${API_URL}/games?${params}`);
+ //  const response = await fetch(`${API_URL}/games?${params}`);
 
   if (!response.ok) {
     throw new Error("Error al cargar los juegos");
@@ -31,25 +34,50 @@ export async function getGameById(id) {
 /**
  * Login
  */
+function getCookie(name) {
+  if (typeof document === "undefined") return null; // Evita errores en servidor (SSR)
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+  return null;
+}
+
 export async function login(data) {
   try {
+    // 1. Pedir la cookie CSRF (Esto establece la cookie XSRF-TOKEN en el navegador)
+    await fetch(`${BASE_URL}/sanctum/csrf-cookie`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    // 2. Extraer el valor de la cookie manualmente
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
+
+    // 3. Hacer el login enviando el token en el HEADER
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-XSRF-TOKEN": xsrfToken, // <--- ESTA ES LA CLAVE QUE FALTABA
+      },
       body: JSON.stringify(data),
-      credentials: "include",
+      credentials: "include", // Vital para que envíe las cookies de sesión
     });
 
     const json = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      return { success: false, message: json.message || "Error en login", errors: json.errors || null };
+      return { 
+        success: false, 
+        message: json.message || "Error en login", 
+        errors: json.errors || null 
+      };
     }
 
-    // Expecting backend to return user data in { user: { ... } } or similar
     return { success: true, user: json.user || json };
   } catch (err) {
-    return { success: false, message: err.message || "Network error" };
+    return { success: false, message: err.message || "Error de red" };
   }
 }
 
