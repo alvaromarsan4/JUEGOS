@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react"; // <--- Importamos 'use'
 import { getGameById } from "@/services/api";
 
 export default function GameDetail({ params }) {
+  // NEXT.JS 15 FIX: Desempaquetamos la promesa params con use()
+  const { id } = use(params);
+
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,9 +18,7 @@ export default function GameDetail({ params }) {
       setLoading(true);
       setError(null);
 
-      const id = params?.id;
-
-      // Evitamos realizar la petición si el id no está definido o es la cadena 'undefined'
+      // Usamos el 'id' que ya sacamos arriba con use()
       if (!id || id === 'undefined') {
         if (mounted) {
           setError('ID de juego inválido');
@@ -29,7 +30,7 @@ export default function GameDetail({ params }) {
       try {
         const res = await getGameById(id);
 
-        // API returns { success, data }
+        // API returns { success, data } o directo
         const payload = res && res.data ? res.data : res;
 
         if (mounted) setGame(payload);
@@ -46,36 +47,38 @@ export default function GameDetail({ params }) {
     return () => {
       mounted = false;
     };
-  }, [params.id]);
+  }, [id]); // <--- Dependencia correcta: 'id' (ya desempaquetado)
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <p className="text-white p-4">Cargando...</p>;
+  if (error) return <p className="text-red-500 p-4">{error}</p>;
 
-  if (!game) return <p>No se encontró el juego.</p>;
+  if (!game) return <p className="text-white p-4">No se encontró el juego.</p>;
 
   return (
-    <div>
-      <h1>{game.title}</h1>
-      <img src={game.thumbnail} alt={game.title} />
+    <div className="p-8 text-white">
+      <h1 className="text-3xl font-bold mb-4">{game.title}</h1>
+      <div className="max-w-2xl">
+          <img src={game.thumbnail} alt={game.title} className="rounded shadow-lg w-full mb-6" />
 
-      <h2 className="mt-4">Descripción</h2>
-      <table className="table-auto border-collapse border">
-        <thead>
-          <tr>
-            <th className="border px-2 py-1 text-left">Campo</th>
-            <th className="border px-2 py-1 text-left">Valor</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="border px-2 py-1 align-top">short_description</td>
-            <td className="border px-2 py-1">{game.short_description || '—'}</td>
-          </tr>
-        </tbody>
-      </table>
+          <h2 className="text-xl font-semibold mt-4 mb-2">Descripción</h2>
+          <table className="table-auto border-collapse border border-gray-600 w-full mb-6">
+            <thead>
+              <tr className="bg-gray-700">
+                <th className="border border-gray-600 px-4 py-2 text-left">Campo</th>
+                <th className="border border-gray-600 px-4 py-2 text-left">Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="border border-gray-600 px-4 py-2 align-top font-medium">Descripción corta</td>
+                <td className="border border-gray-600 px-4 py-2">{game.short_description || '—'}</td>
+              </tr>
+            </tbody>
+          </table>
 
-      <p className="mt-4"><strong>Plataforma:</strong> {game.platform}</p>
-      <p><strong>Género:</strong> {game.genre}</p>
+          <p className="mt-4"><strong>Plataforma:</strong> <span className="text-gray-300">{game.platform}</span></p>
+          <p><strong>Género:</strong> <span className="text-gray-300">{game.genre}</span></p>
+      </div>
     </div>
   );
 }

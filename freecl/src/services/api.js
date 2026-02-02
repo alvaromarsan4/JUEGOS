@@ -80,15 +80,26 @@ export async function login(data) {
 }
 
 /**
- * Registro de usuario
+ * Registro de usuario (CORREGIDO)
  */
 export async function register(data) {
   try {
+    // 1. Pedimos la cookie primero
+    await fetch(`${BASE_URL}/sanctum/csrf-cookie`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    // 2. Leemos el token
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
+
+    // 3. Enviamos petición con el token en cabecera
     const response = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/json",
+        "X-XSRF-TOKEN": xsrfToken, // <--- IMPORTANTE
       },
       body: JSON.stringify(data),
       credentials: "include",
@@ -142,15 +153,12 @@ export async function toggleFavorite(gameData) {
     // Preparamos los datos.
     const payload = typeof gameData === 'object' 
       ? { 
-          // ⚠️ CAMBIO CRUCIAL: Prioridad absoluta a external_id.
-          // Ya no buscamos .id aquí para evitar confundir IDs internos con externos.
+          // Prioridad absoluta a external_id.
           external_id: gameData.external_id,
           title: gameData.title || gameData.name,
-          // Usamos la propiedad 'thumbnail' si existe (viene de GameCard ya limpia),
-          // o buscamos otras opciones como respaldo.
           thumbnail: gameData.thumbnail || gameData.thumbnails || gameData.background_image
         }
-      : { external_id: gameData }; // Fallback por si acaso envías solo ID
+      : { external_id: gameData }; 
 
     const res = await fetch(`${API_URL}/favorites`, {
       method: "POST",
