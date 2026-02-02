@@ -1,15 +1,13 @@
-
-//const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// Definición de URLs base
 const API_URL = "http://localhost:8000/api";
 const BASE_URL = "http://localhost:8000";
+
 /**
  * Obtener listado de juegos con filtros
  */
 export async function getGames(filters = {}) {
   const params = new URLSearchParams(filters).toString();
-console.log("Llamando a:", `${API_URL}/games?${params}`);
-const response = await fetch(`${API_URL}/games?${params}`);
- //  const response = await fetch(`${API_URL}/games?${params}`);
+  const response = await fetch(`${API_URL}/games?${params}`);
 
   if (!response.ok) {
     throw new Error("Error al cargar los juegos");
@@ -19,7 +17,7 @@ const response = await fetch(`${API_URL}/games?${params}`);
 }
 
 /**
- * Obtener detalle de un juego
+ * Obtener detalle de un juego por ID
  */
 export async function getGameById(id) {
   const response = await fetch(`${API_URL}/games/${id}`);
@@ -32,37 +30,37 @@ export async function getGameById(id) {
 }
 
 /**
- * Login
+ * Helper interno para leer cookies (necesario para XSRF-TOKEN)
  */
 function getCookie(name) {
-  if (typeof document === "undefined") return null; // Evita errores en servidor (SSR)
+  if (typeof document === "undefined") return null; 
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) return parts.pop().split(";").shift();
   return null;
 }
 
+/**
+ * Login (Con soporte para CSRF de Laravel Sanctum)
+ */
 export async function login(data) {
   try {
-    // 1. Pedir la cookie CSRF (Esto establece la cookie XSRF-TOKEN en el navegador)
     await fetch(`${BASE_URL}/sanctum/csrf-cookie`, {
       method: "GET",
       credentials: "include",
     });
 
-    // 2. Extraer el valor de la cookie manualmente
     const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
 
-    // 3. Hacer el login enviando el token en el HEADER
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "X-XSRF-TOKEN": xsrfToken, // <--- ESTA ES LA CLAVE QUE FALTABA
+        "X-XSRF-TOKEN": xsrfToken, 
       },
       body: JSON.stringify(data),
-      credentials: "include", // Vital para que envíe las cookies de sesión
+      credentials: "include", 
     });
 
     const json = await response.json().catch(() => ({}));
@@ -82,7 +80,7 @@ export async function login(data) {
 }
 
 /**
- * Registro
+ * Registro de usuario
  */
 export async function register(data) {
   try {
@@ -96,7 +94,6 @@ export async function register(data) {
       credentials: "include",
     });
 
-    // Intenta parsear JSON, si falla (por HTML), devuelve error genérico
     const json = await response.json().catch(() => ({}));
 
     if (!response.ok) {
@@ -120,28 +117,59 @@ export async function getFavorites() {
   try {
     const res = await fetch(`${API_URL}/favorites`, {
       credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
     });
+    
     if (!res.ok) return { success: false };
+    
     const json = await res.json();
-    return json;
+    return json; 
   } catch (err) {
     return { success: false, message: err.message };
   }
 }
 
 /**
- * Alternar favorito por external_id
+ * Alternar favorito (CORREGIDO)
+ * Recibe: gameData (Objeto PREPARADO con external_id, title y thumbnail)
  */
-export async function toggleFavorite(external_id) {
+export async function toggleFavorite(gameData) {
   try {
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
+
+    // Preparamos los datos.
+    const payload = typeof gameData === 'object' 
+      ? { 
+          // ⚠️ CAMBIO CRUCIAL: Prioridad absoluta a external_id.
+          // Ya no buscamos .id aquí para evitar confundir IDs internos con externos.
+          external_id: gameData.external_id,
+          title: gameData.title || gameData.name,
+          // Usamos la propiedad 'thumbnail' si existe (viene de GameCard ya limpia),
+          // o buscamos otras opciones como respaldo.
+          thumbnail: gameData.thumbnail || gameData.thumbnails || gameData.background_image
+        }
+      : { external_id: gameData }; // Fallback por si acaso envías solo ID
+
     const res = await fetch(`${API_URL}/favorites`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-XSRF-TOKEN": xsrfToken 
+      },
       credentials: "include",
-      body: JSON.stringify({ external_id }),
+      body: JSON.stringify(payload),
     });
+
     const json = await res.json();
-    return json;
+    
+    if (!res.ok) {
+        return { success: false, message: json.message || "Error al actualizar favorito" };
+    }
+
+    return { success: true, data: json };
   } catch (err) {
     return { success: false, message: err.message };
   }

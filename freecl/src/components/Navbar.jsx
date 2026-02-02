@@ -5,43 +5,65 @@ import React, { useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
 
 export default function Navbar() {
-	const { user, logout } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
 
-	return (
-		<nav className="w-full bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-			<div className="flex items-center gap-4">
-				<Link href="/" className="font-bold text-lg">
-					Project Games
-				</Link>
+    return (
+        <nav className="w-full bg-slate-900 text-white px-6 py-4 flex items-center justify-between shadow-md">
+            
+            {/* IZQUIERDA: LOGO Y ENLACES PÚBLICOS */}
+            <div className="flex items-center gap-6">
+                <Link href="/" className="font-bold text-lg hover:text-blue-400 transition-colors">
+                    Project Games
+                </Link>
 
-				<Link href="/games" className="text-sm opacity-80 hover:opacity-100">
-					Listado
-				</Link>
-			</div>
+                <Link href="/games" className="text-sm opacity-80 hover:opacity-100 transition-opacity">
+                    Listado
+                </Link>
+            </div>
 
-			<div className="flex items-center gap-4">
-				{user ? (
-					<>
-						<span className="text-sm opacity-90">{user.name}</span>
-						<button
-							onClick={() => logout()}
-							className="text-sm opacity-80 hover:opacity-100 bg-red-600 px-3 py-1 rounded"
-						>
-							Cerrar sesión
-						</button>
-					</>
-				) : (
-					<>
-						<Link href="/login" className="text-sm opacity-80 hover:opacity-100">
-							🔑 Iniciar sesión
-						</Link>
+            {/* DERECHA: USUARIO Y ACCIONES */}
+            <div className="flex items-center gap-4">
+                {user ? (
+                    <>
+                        {/* --- NUEVO ENLACE A FAVORITOS --- */}
+                        <Link 
+                            href="/favoritos" 
+                            className="text-sm flex items-center gap-1 opacity-80 hover:opacity-100 hover:text-red-400 transition-all mr-2"
+                        >
+                            ❤️ Mis Favoritos
+                        </Link>
 
-						<Link href="/register" className="text-sm opacity-80 hover:opacity-100">
-							➕ Registrarse
-						</Link>
-					</>
-				)}
-			</div>
-		</nav>
-	);
+                        {/* SEPARADOR VISUAL */}
+                        <div className="h-4 w-px bg-gray-600 hidden sm:block"></div>
+
+                        {/* NOMBRE USUARIO */}
+                        <span className="text-sm font-semibold text-blue-200">
+                            {user.name}
+                        </span>
+
+                        {/* BOTÓN LOGOUT */}
+                        <button
+                            onClick={() => logout()}
+                            className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors ml-2"
+                        >
+                            Cerrar sesión
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/login" className="text-sm opacity-80 hover:opacity-100 transition-opacity">
+                            🔑 Iniciar sesión
+                        </Link>
+
+                        <Link 
+                            href="/register" 
+                            className="text-sm bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded transition-colors"
+                        >
+                            ➕ Registrarse
+                        </Link>
+                    </>
+                )}
+            </div>
+        </nav>
+    );
 }

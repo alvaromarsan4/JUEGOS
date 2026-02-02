@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { login } from "@/services/api"; // Asegúrate de tener esta función en tu api.js
+import { useState, useContext } from "react";
+// 1. IMPORTANTE: Importamos el contexto en lugar de la api directa
+import { AuthContext } from "@/context/AuthContext"; 
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  
+  // 2. Extraemos la función 'login' del contexto global
+  const { login } = useContext(AuthContext);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -19,23 +24,19 @@ export default function LoginPage() {
     setErrors(null);
 
     try {
+      // 3. Usamos la función del contexto. 
+      // Esta función ya se encarga internamente de llamar a la API y guardar el usuario en el estado global.
       const res = await login(form);
 
-      if (res && res.success) {
-        // Aquí podrías guardar el token en cookies o localStorage si no lo hace tu api.js
-        // localStorage.setItem('token', res.token); 
-        
-        // Redirigir al dashboard o home tras éxito
-        router.push("/dashboard"); 
-      } else if (res && res.errors) {
-        setErrors(res.errors);
-      } else if (res && res.message) {
-        setErrors({ general: res.message });
+      if (res.success) {
+        // 4. Redirigimos a la raíz (donde están los juegos)
+        router.push("/"); 
       } else {
-        setErrors({ general: 'Credenciales incorrectas o error en el servidor' });
+        // Manejamos el error que nos devuelve el contexto
+        setErrors({ general: res.message || "Credenciales incorrectas" });
       }
     } catch (e) {
-      setErrors({ general: e.message || 'Error de red' });
+      setErrors({ general: 'Error inesperado' });
     } finally {
       setLoading(false);
     }
@@ -46,10 +47,8 @@ export default function LoginPage() {
       <h1 className="text-2xl mb-4">Iniciar Sesión</h1>
 
       {errors && (
-        <div className="mb-4 p-2 bg-red-100 text-red-800">
+        <div className="mb-4 p-2 bg-red-100 text-red-800 rounded">
           {errors.general && <div>{errors.general}</div>}
-          {errors.email && <div>{errors.email}</div>}
-          {errors.password && <div>{errors.password}</div>}
         </div>
       )}
 
@@ -59,7 +58,7 @@ export default function LoginPage() {
         required 
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
-        className="w-full mb-2 p-2 border rounded" 
+        className="w-full mb-2 p-2 border rounded text-black" 
       />
 
       <input 
@@ -68,12 +67,12 @@ export default function LoginPage() {
         required 
         value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
-        className="w-full mb-4 p-2 border rounded" 
+        className="w-full mb-4 p-2 border rounded text-black" 
       />
 
       <button 
         disabled={loading} 
-        className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+        className="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700 transition"
       >
         {loading ? 'Entrando...' : 'Iniciar Sesión'}
       </button>

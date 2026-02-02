@@ -4,8 +4,7 @@ import { useState } from "react";
 import Filters from "@/components/Filters";
 import GameCard from "@/components/GameCard";
 import Footer from "@/components/Footer"; // Importamos EL footer de arriba
- import About from '@/components/About'; // Ajusta la ruta según tu carpeta
-import Privacy from '@/components/Privacy';
+
 export default function HomePage() {
   const [view, setView] = useState("home");
  
