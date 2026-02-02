@@ -12,10 +12,20 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password'
+        'password',
+        'description',  // Nuevo campo
+        'age',          // Nuevo campo
+        'gender',       // Nuevo campo
+        'profileImage'  // Nuevo campo
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'remember_token',
+    ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'age' => 'integer', // Asegura que la edad se trate como número
     ];
 }

@@ -182,3 +182,45 @@ export async function toggleFavorite(gameData) {
     return { success: false, message: err.message };
   }
 }
+
+/**
+ * Actualizar perfil de usuario (NUEVO - Para evitar error de conexión)
+ */
+export async function updateProfile(data) {
+  try {
+    // 1. Pedimos la cookie (OBLIGATORIO para peticiones POST/PUT)
+    await fetch(`${BASE_URL}/sanctum/csrf-cookie`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    // 2. Leemos el token
+    const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
+
+    // 3. Enviamos la petición (PUT es lo estándar para editar)
+    const response = await fetch(`${API_URL}/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-XSRF-TOKEN": xsrfToken, 
+      },
+      body: JSON.stringify(data),
+      credentials: "include",
+    });
+
+    const json = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: json.message || "Error al actualizar perfil",
+        errors: json.errors || null
+      };
+    }
+
+    return { success: true, user: json.user || json };
+  } catch (err) {
+    return { success: false, message: err.message || "Error de conexión" };
+  }
+}

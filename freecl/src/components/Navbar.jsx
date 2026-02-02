@@ -36,13 +36,19 @@ export default function Navbar() {
                         {/* SEPARADOR VISUAL */}
                         <div className="h-4 w-px bg-gray-600 hidden sm:block"></div>
 
-                        {/* NOMBRE USUARIO */}
-                        <span className="text-sm font-semibold text-blue-200">
+                        <Link
+          href="/Profile"
+          className="text-blue-400 font-medium hover:text-blue-300 transition-colors"
+        >
+ <span className="text-sm font-semibold text-blue-200">
                             {user.name}
                         </span>
+          {/* O usa: {user ? user.username : "agfavdag"} */}
+        </Link>
 
                         {/* BOTÓN LOGOUT */}
                         <button
+							href="/"
                             onClick={() => logout()}
                             className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors ml-2"
                         >

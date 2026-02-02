@@ -9,6 +9,7 @@ import {
 
 export const AuthContext = createContext({ 
   user: null, 
+  setUser: () => {}, // <--- Esto evita errores de autocompletado
   login: async () => {}, 
   logout: () => {},
   toggleFavorite: async () => {} 
@@ -17,19 +18,20 @@ export const AuthContext = createContext({
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // 1. Carga inicial
+  // 1. Carga inicial desde LocalStorage
   useEffect(() => {
     try {
       const raw = localStorage.getItem("pg_user");
       if (raw) {
         const parsedUser = JSON.parse(raw);
+        // Aseguramos que los favoritos sean números
         parsedUser.favorites = (parsedUser.favorites || []).map(Number);
         setUser(parsedUser);
       }
     } catch (e) { /* ignore */ }
   }, []);
 
-  // 2. Sincronización en segundo plano (para asegurar que los datos son reales)
+  // 2. Sincronización en segundo plano (para asegurar que los datos son reales al recargar)
   useEffect(() => {
     if (!user) return;
 
@@ -37,10 +39,12 @@ export function AuthProvider({ children }) {
         try {
             const favsResult = await getFavoritesService();
             const favsArray = Array.isArray(favsResult) ? favsResult : (favsResult.data || []);
+            // Extraemos solo los IDs numéricos
             const cleanFavs = favsArray.map(f => Number(f.external_id || f.id)).filter(n => !isNaN(n));
 
             setUser(prev => {
                 if (!prev) return null;
+                // Comparamos para no renderizar si no hay cambios
                 const prevFavsStr = JSON.stringify((prev.favorites || []).sort());
                 const newFavsStr = JSON.stringify(cleanFavs.sort());
                 
@@ -56,19 +60,23 @@ export function AuthProvider({ children }) {
     syncFavorites();
   }, [user?.id]);
 
+  // LOGIN
   const login = async (credentials) => {
     try {
       const result = await loginService(credentials);
       if (result && result.success) {
         let cleanFavs = [];
+        // Intentamos obtener favoritos frescos
         try {
             const favsResult = await getFavoritesService();
             const favsArray = Array.isArray(favsResult) ? favsResult : (favsResult.data || []);
             cleanFavs = favsArray.map(f => Number(f.external_id || f.id)).filter(n => !isNaN(n));
         } catch (e) {
+            // Fallback con los que vienen del login
             cleanFavs = (result.user.favorites || []).map(Number).filter(n => !isNaN(n));
         }
         const userWithFavs = { ...result.user, favorites: cleanFavs };
+        
         setUser(userWithFavs);
         localStorage.setItem("pg_user", JSON.stringify(userWithFavs));
         return { success: true, user: userWithFavs };
@@ -79,56 +87,50 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // LOGOUT
   const logout = () => {
     setUser(null);
     localStorage.removeItem("pg_user");
   };
 
-  // --- AQUÍ ESTÁ EL CAMBIO PARA QUE SEA INSTANTÁNEO ---
+  // TOGGLE FAVORITE (OPTIMISTA)
   const toggleFavorite = async (gameData) => {
     if (!user) return;
 
     const rawId = typeof gameData === 'object' ? (gameData.external_id || gameData.id) : gameData;
     const gameId = Number(rawId); 
 
-    // 1. Guardamos una copia del estado actual por si hay error
+    // Guardamos estado anterior por si falla
     const previousUser = { ...user };
 
-    // 2. ACTUALIZACIÓN OPTIMISTA: ¡Cambiamos el estado YA, sin esperar a la API!
+    // ACTUALIZACIÓN VISUAL INSTANTÁNEA
     setUser(prev => {
         const currentFavs = (prev.favorites || []).map(Number);
         const isFav = currentFavs.includes(gameId);
         let newFavs;
 
         if (isFav) {
-            // Si ya lo tiene, lo quitamos visualmente al instante
-            newFavs = currentFavs.filter(id => id !== gameId);
+            newFavs = currentFavs.filter(id => id !== gameId); // Quitar
         } else {
-            // Si no lo tiene, lo añadimos visualmente al instante
-            newFavs = [...currentFavs, gameId];
+            newFavs = [...currentFavs, gameId]; // Añadir
         }
 
         const updated = { ...prev, favorites: newFavs };
-        // Actualizamos también localStorage para que persista si recargas rápido
         localStorage.setItem("pg_user", JSON.stringify(updated));
         return updated;
     });
 
     try {
-        // 3. Llamamos a la API en segundo plano
+        // Llamada a la API real
         const res = await toggleFavoriteService(gameData);
 
-        // Si la API falla, lanzamos error para que salte al catch
         if (!res || !res.success) {
             throw new Error("Error en API");
         }
-        // Si todo va bien, no hacemos nada, porque ya pintamos el corazón en el paso 2.
-
     } catch (error) {
         console.error("Error al guardar favorito, revirtiendo...", error);
         
-        // 4. ROLLBACK: Si falló el servidor, volvemos a poner el estado como estaba antes
-        // (El corazón volverá a su estado original y avisamos al usuario)
+        // ROLLBACK: Si falla, volvemos atrás
         setUser(previousUser);
         localStorage.setItem("pg_user", JSON.stringify(previousUser));
         alert("No se pudo guardar el favorito. Revisa tu conexión.");
@@ -136,7 +138,8 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, toggleFavorite }}>
+    // ⚠️ AQUÍ ESTÁ LA CORRECCIÓN: Añadido 'setUser'
+    <AuthContext.Provider value={{ user, setUser, login, logout, toggleFavorite }}>
       {children}
     </AuthContext.Provider>
   );
