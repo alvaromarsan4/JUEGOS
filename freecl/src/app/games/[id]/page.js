@@ -1,83 +1,224 @@
 "use client";
 
-import { useEffect, useState, use } from "react"; // <--- Importamos 'use'
-import { getGameById } from "@/services/api";
+import { useEffect, useState, use } from "react";
+import { getGameById, getReviewsByGame, submitReview } from "@/services/api";
 
 export default function GameDetail({ params }) {
-  // NEXT.JS 15 FIX: Desempaquetamos la promesa params con use()
   const { id } = use(params);
 
   const [game, setGame] = useState(null);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Estados del formulario
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(5);
+  const [submitting, setSubmitting] = useState(false);
+
+  // --- HELPER PARA NORMALIZAR DATOS ---
+  // Detecta si es un array directo o un objeto envuelto (ej: Laravel Resources)
+  const normalizeReviews = (data) => {
+     if (Array.isArray(data)) return data;
+     if (data && Array.isArray(data.data)) return data.data; 
+     if (data && Array.isArray(data.reviews)) return data.reviews;
+     return [];
+  };
+
+  // Carga inicial de datos
   useEffect(() => {
     let mounted = true;
 
-    async function load() {
+    async function loadData() {
+      if (!id) return;
       setLoading(true);
       setError(null);
 
-      // Usamos el 'id' que ya sacamos arriba con use()
-      if (!id || id === 'undefined') {
-        if (mounted) {
-          setError('ID de juego inválido');
-          setLoading(false);
-        }
-        return;
-      }
-
       try {
-        const res = await getGameById(id);
+        const [gameData, reviewsData] = await Promise.all([
+          getGameById(id),
+          getReviewsByGame(id)
+        ]);
 
-        // API returns { success, data } o directo
-        const payload = res && res.data ? res.data : res;
-
-        if (mounted) setGame(payload);
+        if (mounted) {
+          setGame(gameData.data || gameData);
+          // Usamos el helper para asegurar que reviews sea siempre un array
+          setReviews(normalizeReviews(reviewsData));
+        }
       } catch (e) {
-        console.error('Error loading game:', e);
-        if (mounted) setError(e.message || 'Error al cargar el juego');
+        console.error('Error al cargar datos:', e);
+        if (mounted) setError('No se pudo cargar la información del juego');
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
-    load();
+    loadData();
+    return () => { mounted = false; };
+  }, [id]);
 
-    return () => {
-      mounted = false;
-    };
-  }, [id]); // <--- Dependencia correcta: 'id' (ya desempaquetado)
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
 
-  if (loading) return <p className="text-white p-4">Cargando...</p>;
-  if (error) return <p className="text-red-500 p-4">{error}</p>;
+    const result = await submitReview({
+      game_id: id,
+      comment: comment,
+      rating: rating,
+      title: game.title,
+    thumbnail: game.thumbnail || game.background_image,
+    });
 
-  if (!game) return <p className="text-white p-4">No se encontró el juego.</p>;
+    if (result.success) {
+      try {
+        // Refrescamos la lista completa desde el servidor
+        const updatedReviews = await getReviewsByGame(id);
+        
+        // Usamos el helper también aquí
+        setReviews(normalizeReviews(updatedReviews));
+
+        setComment("");
+        alert("¡Reseña publicada y lista actualizada!");
+      } catch (error) {
+        console.error("Error al refrescar las reseñas:", error);
+        alert("Reseña guardada, pero hubo un error al refrescar la lista.");
+      }
+    } else {
+      alert(result.message || "Error al publicar. ¿Has iniciado sesión?");
+    }
+    
+    setSubmitting(false);
+  };
+
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <p className="text-blue-400 animate-pulse font-bold text-xl">Cargando detalles...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <p className="text-red-500 font-bold bg-red-500/10 p-4 rounded-lg border border-red-500">{error}</p>
+    </div>
+  );
+
+  if (!game) return <p className="text-white p-4 text-center">Juego no encontrado.</p>;
 
   return (
-    <div className="p-8 text-white">
-      <h1 className="text-3xl font-bold mb-4">{game.title}</h1>
-      <div className="max-w-2xl">
-          <img src={game.thumbnail} alt={game.title} className="rounded shadow-lg w-full mb-6" />
+    <div className="p-8 text-white max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        {/* IZQUIERDA: Información del Juego */}
+        <div className="lg:col-span-2">
+          <h1 className="text-4xl font-bold mb-6 text-blue-400 drop-shadow-md">{game.title}</h1>
+          <div className="relative group">
+            <img 
+              src={game.thumbnail} 
+              alt={game.title} 
+              className="rounded-xl shadow-2xl w-full mb-8 border border-gray-700 object-cover transition-transform duration-500 group-hover:scale-[1.01]" 
+            />
+          </div>
 
-          <h2 className="text-xl font-semibold mt-4 mb-2">Descripción</h2>
-          <table className="table-auto border-collapse border border-gray-600 w-full mb-6">
-            <thead>
-              <tr className="bg-gray-700">
-                <th className="border border-gray-600 px-4 py-2 text-left">Campo</th>
-                <th className="border border-gray-600 px-4 py-2 text-left">Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="border border-gray-600 px-4 py-2 align-top font-medium">Descripción corta</td>
-                <td className="border border-gray-600 px-4 py-2">{game.short_description || '—'}</td>
-              </tr>
-            </tbody>
-          </table>
+          <h2 className="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2 text-gray-200 flex items-center gap-2">
+            <span className="text-blue-500">ℹ️</span> Ficha Técnica
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 bg-gray-900/50 p-6 rounded-xl border border-gray-800 backdrop-blur-sm">
+            <p><strong className="text-blue-300">Género:</strong> <span className="text-gray-300">{game.genre}</span></p>
+            <p><strong className="text-blue-300">Plataforma:</strong> <span className="text-gray-300">{game.platform}</span></p>
+            <p><strong className="text-blue-300">Desarrollador:</strong> <span className="text-gray-300">{game.developer || 'N/A'}</span></p>
+            <p><strong className="text-blue-300">Lanzamiento:</strong> <span className="text-gray-300">{game.release_date || 'N/A'}</span></p>
+          </div>
 
-          <p className="mt-4"><strong>Plataforma:</strong> <span className="text-gray-300">{game.platform}</span></p>
-          <p><strong>Género:</strong> <span className="text-gray-300">{game.genre}</span></p>
+          <h3 className="text-xl font-semibold mb-3 text-gray-200">Descripción</h3>
+          <p className="text-gray-400 leading-relaxed text-lg bg-gray-800/30 p-4 rounded-lg border border-gray-700/30">
+            {game.short_description}
+          </p>
+        </div>
+
+        {/* DERECHA: Sistema de Reseñas */}
+        <div className="lg:col-span-1 space-y-8">
+          
+          <div className="bg-gray-800/80 p-6 rounded-2xl border border-gray-700 shadow-xl backdrop-blur-md sticky top-8">
+            <h3 className="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+              <span className="text-2xl">✍️</span> Danos tu opinión
+            </h3>
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider mb-2 text-gray-500 font-bold italic">Tu calificación</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setRating(num)}
+                      className={`flex-1 py-2 rounded-lg border transition-all duration-300 ${
+                        rating >= num 
+                        ? "bg-yellow-500/20 border-yellow-500 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]" 
+                        : "bg-gray-700 border-gray-600 text-gray-400 hover:border-gray-500"
+                      }`}
+                    >
+                      {num}★
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider mb-2 text-gray-500 font-bold italic">Reseña</label>
+                <textarea 
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-700 rounded-xl p-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200 transition-shadow"
+                  placeholder="¿Qué tal la experiencia de juego?"
+                  required
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={submitting}
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 text-white font-black py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-blue-900/20"
+              >
+                {submitting ? "PROCESANDO..." : "PUBLICAR RESEÑA"}
+              </button>
+            </form>
+
+            <div className="mt-8 space-y-4">
+              <h3 className="text-lg font-bold text-gray-200 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
+                 Comunidad
+              </h3>
+              <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                {reviews.length > 0 ? (
+                  reviews.map((rev) => (
+                    <div key={rev.id} className="bg-gray-900/60 p-4 rounded-xl border border-gray-800 hover:border-blue-900/50 transition-colors group">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-bold text-blue-400 text-sm group-hover:text-blue-300 transition-colors">
+                            {rev.user ? rev.user.name : (rev.username || 'Usuario')}
+                          </p>
+                          <p className="text-[10px] text-gray-500">
+                             {rev.created_at ? new Date(rev.created_at).toLocaleDateString() : 'Reciente'}
+                          </p>
+                        </div>
+                        <div className="flex text-yellow-500 text-[10px] bg-yellow-500/10 px-2 py-1 rounded-full border border-yellow-500/20 shadow-sm">
+                          {"★".repeat(rev.rating)}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 leading-relaxed italic line-clamp-4">
+                        "{rev.comment}"
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 bg-gray-900/40 rounded-xl border border-dashed border-gray-700">
+                    <p className="text-gray-500 text-sm italic">Sin reseñas aún. ¡Sé el primero!</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

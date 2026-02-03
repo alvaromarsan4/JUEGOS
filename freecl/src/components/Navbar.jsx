@@ -13,17 +13,31 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-slate-900 text-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        {/* CAMBIO AQUI: h-20 (80px) para hacer la barra más alta */}
+        <div className="flex items-center justify-between h-20">
           
           {/* --- LOGO --- */}
           <div className="flex-shrink-0">
-            <Link href="/" onClick={closeMenu} className="font-bold text-xl hover:text-blue-400 transition-colors">
-              🎮 Project Games
+            <Link 
+              href="/" 
+              onClick={closeMenu} 
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
+              {/* CAMBIO AQUI: h-16 (64px) para que el logo sea enorme */}
+              <img 
+                src="/logo.png" 
+                alt="Logo Project Games" 
+                className="h-18 w-auto object-contain" 
+              />
+
+              {/* CAMBIO AQUI: text-2xl para que el texto acompañe al tamaño del logo */}
+              <span className="font-bold text-2xl hover:text-blue-400 transition-colors">
+                 Project Games
+              </span>
             </Link>
           </div>
 
           {/* --- MENÚ DE ESCRITORIO --- */}
-          {/* CAMBIO AQUI: Usamos 'hidden lg:flex' en lugar de 'md:flex' */}
           <div className="hidden lg:flex items-center gap-6">
             <Link href="/games" className="text-sm hover:text-blue-400 transition-colors">
               Listado de juegos
@@ -32,12 +46,17 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link href="/favoritos" className="text-sm flex items-center gap-1 hover:text-red-400 transition-colors">
-                  ❤️ Favoritos
+                  ❤️ Mis Favoritos
                 </Link>
                 
                 <div className="h-4 w-px bg-gray-600"></div>
 
                 <Link href="/Profile" className="text-sm font-semibold text-blue-200 hover:text-white transition-colors">
+                  <img 
+                src="/perfil1.png" 
+                alt="Perfil" 
+                className="h-6 w-6 object-contain mr-2 inline-block rounded-full" 
+              />
                   {user.name}
                 </Link>
 
@@ -61,7 +80,6 @@ export default function Navbar() {
           </div>
 
           {/* --- BOTÓN HAMBURGUESA --- */}
-          {/* CAMBIO AQUI: Usamos 'lg:hidden' para que se oculte en pantallas grandes */}
           <div className="flex lg:hidden items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -69,11 +87,11 @@ export default function Navbar() {
             >
               <span className="sr-only">Abrir menú</span>
               {!isOpen ? (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               ) : (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               )}
@@ -83,7 +101,6 @@ export default function Navbar() {
       </div>
 
       {/* --- MENÚ MÓVIL DESPLEGABLE --- */}
-      {/* CAMBIO AQUI: 'lg:hidden' para seguridad extra */}
       {isOpen && (
         <div className="lg:hidden bg-slate-800 border-t border-slate-700">
           <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col">
@@ -97,7 +114,11 @@ export default function Navbar() {
                   ❤️ Mis Favoritos
                 </Link>
                 <Link href="/Profile" onClick={closeMenu} className="block py-2 text-sm text-blue-200 font-bold hover:text-white">
-                  👤 Mi Perfil ({user.name})
+                   <img 
+                src="/perfil1.png" 
+                alt="Perfil" 
+                className="h-6 w-6 object-contain mr-2 inline-block rounded-full" 
+              /> ({user.name})
                 </Link>
                 <button
                   onClick={() => { logout(); closeMenu(); }}

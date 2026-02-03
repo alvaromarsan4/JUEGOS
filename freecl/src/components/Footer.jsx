@@ -13,7 +13,7 @@ export default function Footer({ setView }) {
             <Link href="/" className="font-bold text-xl tracking-tight">
               Project <span className="text-blue-500">Games</span>
             </Link>
-            <p className="text-sm opacity-60 mt-2">Tu biblioteca de juegos favorita.</p>
+            <p className="text-sm opacity-60 mt-2">Tu biblioteca de juegos gratis favorita.</p>
           </div>
 
           <div className="flex gap-8 text-sm">
