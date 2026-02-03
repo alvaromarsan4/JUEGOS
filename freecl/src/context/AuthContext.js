@@ -18,10 +18,10 @@ export const AuthContext = createContext({
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // 1. Carga inicial desde LocalStorage
+  // 1. Carga inicial desde SESSION STORAGE (Cambio 1)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem("pg_user");
+      const raw = sessionStorage.getItem("pg_user"); // <--- USO DE SESSIONSTORAGE
       if (raw) {
         const parsedUser = JSON.parse(raw);
         // Aseguramos que los favoritos sean números
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     } catch (e) { /* ignore */ }
   }, []);
 
-  // 2. Sincronización en segundo plano (para asegurar que los datos son reales al recargar)
+  // 2. Sincronización en segundo plano
   useEffect(() => {
     if (!user) return;
 
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
                 
                 if (prevFavsStr !== newFavsStr) {
                     const updated = { ...prev, favorites: cleanFavs };
-                    localStorage.setItem("pg_user", JSON.stringify(updated));
+                    sessionStorage.setItem("pg_user", JSON.stringify(updated)); // <--- USO DE SESSIONSTORAGE
                     return updated;
                 }
                 return prev;
@@ -78,7 +78,7 @@ export function AuthProvider({ children }) {
         const userWithFavs = { ...result.user, favorites: cleanFavs };
         
         setUser(userWithFavs);
-        localStorage.setItem("pg_user", JSON.stringify(userWithFavs));
+        sessionStorage.setItem("pg_user", JSON.stringify(userWithFavs)); // <--- USO DE SESSIONSTORAGE
         return { success: true, user: userWithFavs };
       }
       return { success: false, message: result.message || "Credenciales inválidas" };
@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
   // LOGOUT
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("pg_user");
+    sessionStorage.removeItem("pg_user"); // <--- USO DE SESSIONSTORAGE
   };
 
   // TOGGLE FAVORITE (OPTIMISTA)
@@ -116,7 +116,7 @@ export function AuthProvider({ children }) {
         }
 
         const updated = { ...prev, favorites: newFavs };
-        localStorage.setItem("pg_user", JSON.stringify(updated));
+        sessionStorage.setItem("pg_user", JSON.stringify(updated)); // <--- USO DE SESSIONSTORAGE
         return updated;
     });
 
@@ -132,13 +132,12 @@ export function AuthProvider({ children }) {
         
         // ROLLBACK: Si falla, volvemos atrás
         setUser(previousUser);
-        localStorage.setItem("pg_user", JSON.stringify(previousUser));
+        sessionStorage.setItem("pg_user", JSON.stringify(previousUser)); // <--- USO DE SESSIONSTORAGE
         alert("No se pudo guardar el favorito. Revisa tu conexión.");
     }
   };
 
   return (
-    // ⚠️ AQUÍ ESTÁ LA CORRECCIÓN: Añadido 'setUser'
     <AuthContext.Provider value={{ user, setUser, login, logout, toggleFavorite }}>
       {children}
     </AuthContext.Provider>

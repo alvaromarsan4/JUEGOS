@@ -8,6 +8,7 @@ import Filters from "@/components/Filters";
 export default function GamesPage() {
   const [games, setGames] = useState([]);
   const [filters, setFilters] = useState({});
+  
 
   useEffect(() => {
     let favs = [];
