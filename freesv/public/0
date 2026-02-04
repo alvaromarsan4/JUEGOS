@@ -38,3 +38,7 @@
 [03-Feb-2026 12:38:16 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
 [03-Feb-2026 12:38:54 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
 [03-Feb-2026 12:38:54 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
+[04-Feb-2026 08:29:46 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
+[04-Feb-2026 08:29:46 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
+[04-Feb-2026 08:57:01 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
+[04-Feb-2026 08:57:01 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0

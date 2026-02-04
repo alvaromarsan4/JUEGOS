@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '@/context/AuthContext';
-// 1. IMPORTAMOS LAS FUNCIONES DE RESEÑAS
 import { getFavorites, updateProfile, getUserReviews, deleteReview } from "@/services/api"; 
 import GameCard from "@/components/GameCard";
 
-// ... (El array AVAILABLE_AVATARS se mantiene igual, lo omito para no ocupar espacio innecesario) ...
+// ... (El array AVAILABLE_AVATARS se mantiene igual) ...
 const AVAILABLE_AVATARS = [
   "https://api.dicebear.com/7.x/pixel-art/svg?seed=Mario",
   "https://api.dicebear.com/7.x/pixel-art/svg?seed=Link",
@@ -43,8 +42,18 @@ const ProfilePage = () => {
   const [updating, setUpdating] = useState(false);
   
   const [favGames, setFavGames] = useState([]);
-  // 2. NUEVO ESTADO PARA LAS RESEÑAS
   const [userReviews, setUserReviews] = useState([]); 
+
+  // --- 1. NUEVO: ESTADO DE NOTIFICACIÓN ---
+  const [notification, setNotification] = useState({ type: '', message: '' });
+
+  // --- 2. NUEVO: HELPER PARA MOSTRAR NOTIFICACIONES ---
+  const showNotification = (type, msg) => {
+    setNotification({ type, message: msg });
+    setTimeout(() => {
+        setNotification({ type: '', message: '' });
+    }, 4000); // Se borra a los 4 segundos
+  };
 
   const [formData, setFormData] = useState({
     name: '',     
@@ -65,21 +74,17 @@ const ProfilePage = () => {
         gender: user.gender || '', 
         profileImage: user.profileImage || 'https://placehold.co/150'
       });
-      fetchData(); // Llamamos a una función unificada
+      fetchData(); 
     }
   }, [user]);
 
-  // Función unificada para cargar favoritos y reseñas
   const fetchData = async () => {
     try {
-      // Cargar Favoritos
       const favRes = await getFavorites();
       let favData = Array.isArray(favRes) ? favRes : (favRes.data || []);
       setFavGames(favData);
 
-      // Cargar Reseñas (LÓGICA DE LA IMAGEN ADAPTADA A TU API)
       const reviewsRes = await getUserReviews();
-      // Aseguramos que sea array
       const reviewsData = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.data || []); 
       setUserReviews(reviewsData);
 
@@ -91,13 +96,21 @@ const ProfilePage = () => {
   };
 
   const handleDeleteReview = async (reviewId) => {
+    // Mantenemos confirm nativo porque reemplazarlo requiere un modal complejo,
+    // pero el resultado lo mostramos con la notificación bonita.
     if (!confirm("¿Seguro que quieres borrar esta reseña?")) return;
     
+    // Limpiamos notificación previa
+    setNotification({ type: '', message: '' });
+
     const success = await deleteReview(reviewId);
     if (success) {
       setUserReviews(prev => prev.filter(r => r.id !== reviewId));
+      // CAMBIO: Notificación visual Verde
+      showNotification('success', "Reseña eliminada correctamente");
     } else {
-      alert("Error al eliminar la reseña");
+      // CAMBIO: Notificación visual Roja
+      showNotification('error', "Error al eliminar la reseña");
     }
   };
 
@@ -118,6 +131,7 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdating(true);
+    setNotification({ type: '', message: '' });
 
     try {
       const res = await updateProfile(formData);
@@ -128,13 +142,16 @@ const ProfilePage = () => {
         sessionStorage.setItem('pg_user', JSON.stringify(updatedUser));
         
         setIsEditing(false);
-        alert("¡Perfil actualizado con éxito!");
+        // CAMBIO: Notificación visual Verde
+        showNotification('success', "¡Perfil actualizado con éxito!");
       } else {
-        alert(`Error: ${res.message || "No se pudo actualizar"}`);
+        // CAMBIO: Notificación visual Roja
+        showNotification('error', `Error: ${res.message || "No se pudo actualizar"}`);
       }
     } catch (error) {
       console.error("Error al actualizar:", error);
-      alert("Error de conexión. Intenta de nuevo.");
+      // CAMBIO: Notificación visual Roja
+      showNotification('error', "Error de conexión. Intenta de nuevo.");
     } finally {
       setUpdating(false);
     }
@@ -145,6 +162,18 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-[#0a0c10] text-white pb-20 px-4">
       <div className="max-w-4xl mx-auto pt-10">
+
+        {/* --- 3. NUEVO: BLOQUE DE NOTIFICACIÓN VISUAL --- */}
+        {notification.message && (
+            <div className={`p-4 mb-6 rounded-lg border backdrop-blur-sm animate-fade-in-down font-semibold text-center shadow-lg transition-all duration-300 ${
+                notification.type === 'success' 
+                    ? 'bg-green-500/10 border-green-500/50 text-green-400 shadow-green-900/20' 
+                    : 'bg-red-500/10 border-red-500/50 text-red-400 shadow-red-900/20'
+            }`}>
+                {notification.type === 'success' ? '✅ ' : '⚠️ '}
+                {notification.message}
+            </div>
+        )}
         
         {/* TARJETA DE PERFIL (VISTA LECTURA / EDICIÓN) */}
         <div className="bg-[#161b22] p-8 rounded-xl border border-gray-800 mb-8">
@@ -172,7 +201,6 @@ const ProfilePage = () => {
             </div>
           ) : (
              <form onSubmit={handleSubmit} className="space-y-6">
-              {/* ... (TU CÓDIGO DE EDICIÓN SE MANTIENE IGUAL) ... */}
               <div className="flex flex-col items-center gap-4 border-b border-gray-700 pb-6">
                  <label className="text-xs text-gray-500 uppercase font-bold">Imagen de Perfil</label>
                  <div className="flex items-center gap-4">
@@ -228,12 +256,11 @@ const ProfilePage = () => {
               )}
             </div>
           ) : (
-            // 3. AQUÍ ESTÁ LA LÓGICA DE LA IMAGEN IMPLEMENTADA
             <div className="grid gap-4">
                {userReviews.length > 0 ? (
                  userReviews.map((review) => (
                     <div key={review.id} className="p-5 border border-gray-700 rounded-lg shadow-sm bg-[#0d1117] hover:border-blue-500/50 transition-colors relative group">
-                        {/* Botón de borrar (extra útil para perfil) */}
+                        {/* Botón de borrar */}
                         <button 
                             onClick={() => handleDeleteReview(review.id)}
                             className="absolute top-4 right-4 text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -242,40 +269,29 @@ const ProfilePage = () => {
                             🗑️
                         </button>
 
-                        {/* Título del juego (Si el backend lo envía) */}
-     <h2 className="font-bold text-lg text-blue-400 mb-1">
-   {/* Si existe el objeto game, muestra el título. Si no, muestra "Juego no encontrado" */}
-   {review.game ? review.game.title : "Juego no disponible"}
-</h2>
+                        <h2 className="font-bold text-lg text-blue-400 mb-1">
+                           {review.game ? review.game.title : "Juego no disponible"}
+                        </h2>
 
-{/* Para la imagen de fondo o miniatura si quisieras ponerla */}
-{review.game && (
-   <img src={review.game.thumbnail} alt={review.game.title} className="w-full h-24 object-cover mb-2 rounded" />
-)}
-                        
-                        {/* Estrellas usando .repeat() como en la imagen */}
                         <div className="text-yellow-500 text-sm mb-2">
                             {'★'.repeat(review.rating)}
                             <span className="text-gray-600 ml-2 text-xs">({review.rating}/5)</span>
                         </div>
 
-                        {/* Comentario */}
                         <p className="italic text-gray-300 mb-3 bg-gray-800/50 p-3 rounded border border-gray-800">
                             "{review.comment}"
                         </p>
 
-                        {/* Fecha */}
                         <span className="text-xs text-gray-500 font-mono">
                             Publicado el: {new Date(review.created_at).toLocaleDateString()}
                         </span>
                     </div>
                  ))
                ) : (
-                  // Mensaje si está vacío (como en la imagen)
-                  <div className="text-center py-12 border border-dashed border-gray-700 rounded-lg">
+                 <div className="text-center py-12 border border-dashed border-gray-700 rounded-lg">
                      <p className="text-gray-500 text-lg">Aún no has escrito ninguna reseña.</p>
                      <p className="text-gray-600 text-sm mt-2">¡Ve a un juego y comparte tu opinión!</p>
-                  </div>
+                 </div>
                )}
             </div>
           )}

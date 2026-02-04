@@ -16,8 +16,19 @@ export default function GameDetail({ params }) {
   const [rating, setRating] = useState(5);
   const [submitting, setSubmitting] = useState(false);
 
+  // --- NUEVO: ESTADO PARA NOTIFICACIONES ---
+  const [notification, setNotification] = useState({ type: '', message: '' });
+
+  // --- HELPER PARA MOSTRAR NOTIFICACIONES ---
+  const showNotification = (type, msg) => {
+    setNotification({ type, message: msg });
+    // Ocultar automáticamente después de 4 segundos
+    setTimeout(() => {
+        setNotification({ type: '', message: '' });
+    }, 4000);
+  };
+
   // --- HELPER PARA NORMALIZAR DATOS ---
-  // Detecta si es un array directo o un objeto envuelto (ej: Laravel Resources)
   const normalizeReviews = (data) => {
      if (Array.isArray(data)) return data;
      if (data && Array.isArray(data.data)) return data.data; 
@@ -42,7 +53,6 @@ export default function GameDetail({ params }) {
 
         if (mounted) {
           setGame(gameData.data || gameData);
-          // Usamos el helper para asegurar que reviews sea siempre un array
           setReviews(normalizeReviews(reviewsData));
         }
       } catch (e) {
@@ -60,31 +70,35 @@ export default function GameDetail({ params }) {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    // Limpiamos notificaciones previas al intentar enviar
+    setNotification({ type: '', message: '' });
 
     const result = await submitReview({
       game_id: id,
       comment: comment,
       rating: rating,
       title: game.title,
-    thumbnail: game.thumbnail || game.background_image,
+      thumbnail: game.thumbnail || game.background_image,
     });
 
     if (result.success) {
       try {
-        // Refrescamos la lista completa desde el servidor
         const updatedReviews = await getReviewsByGame(id);
-        
-        // Usamos el helper también aquí
         setReviews(normalizeReviews(updatedReviews));
 
         setComment("");
-        alert("¡Reseña publicada y lista actualizada!");
+        
+        // CAMBIO: Usamos la notificación verde en lugar del alert
+        showNotification('success', "¡Reseña publicada y lista actualizada!");
+        
       } catch (error) {
         console.error("Error al refrescar las reseñas:", error);
-        alert("Reseña guardada, pero hubo un error al refrescar la lista.");
+        // CAMBIO: Notificación de error visual
+        showNotification('error', "Reseña guardada, pero hubo un error al refrescar la lista.");
       }
     } else {
-      alert(result.message || "Error al publicar. ¿Has iniciado sesión?");
+      // CAMBIO: Notificación de error visual
+      showNotification('error', result.message || "Error al publicar. ¿Has iniciado sesión?");
     }
     
     setSubmitting(false);
@@ -142,6 +156,19 @@ export default function GameDetail({ params }) {
             <h3 className="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
               <span className="text-2xl">✍️</span> Danos tu opinión
             </h3>
+
+            {/* --- AQUÍ MUESTRO LA NOTIFICACIÓN --- */}
+            {notification.message && (
+                <div className={`p-3 mb-4 rounded-lg border text-sm font-semibold transition-all duration-300 ${
+                    notification.type === 'success' 
+                        ? 'bg-green-500/20 border-green-500 text-green-200 shadow-[0_0_10px_rgba(34,197,94,0.2)]' 
+                        : 'bg-red-500/20 border-red-500 text-red-200 shadow-[0_0_10px_rgba(239,68,68,0.2)]'
+                }`}>
+                    {notification.type === 'success' ? '✅ ' : '⚠️ '}
+                    {notification.message}
+                </div>
+            )}
+
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs uppercase tracking-wider mb-2 text-gray-500 font-bold italic">Tu calificación</label>
@@ -185,7 +212,7 @@ export default function GameDetail({ params }) {
 
             <div className="mt-8 space-y-4">
               <h3 className="text-lg font-bold text-gray-200 flex items-center gap-2 border-l-4 border-blue-500 pl-3">
-                 Comunidad
+                  Comunidad
               </h3>
               <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {reviews.length > 0 ? (
