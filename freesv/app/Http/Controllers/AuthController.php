@@ -7,8 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-
+use Illuminate\Support\Facades\Cookie;
 class AuthController extends Controller
 {
     /**
@@ -79,7 +78,7 @@ class AuthController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
+        
         return response()->json([
             'success' => true,
             'message' => 'Sesión cerrada correctamente'
