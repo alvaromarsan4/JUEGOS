@@ -18,7 +18,8 @@ export default function RootLayout({ children }) {
       <body
         // AQUI ESTÁ EL CAMBIO: añadí "flex flex-col" al final.
         // Esto activa la flexibilidad vertical y permite que el flex-grow del main funcione.
-        className={`min-h-screen w-full bg-slate-950 text-white ${inter.className} flex flex-col`}
+        // Esto activa la flexibilidad vertical y permite que el flex-grow del main funcione.
+        className={`min-h-screen w-full bg-background text-foreground ${inter.className} flex flex-col`}
       >
         <AuthProvider>
 
@@ -27,8 +28,8 @@ export default function RootLayout({ children }) {
 
           {/* CONTENIDO PRINCIPAL */}
           {/* Al tener el padre "flex-col", este flex-grow ahora sí empujará el footer abajo */}
-          <main className="flex-grow w-full">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <main className="flex-grow w-full flex flex-col">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex-grow w-full flex flex-col">
               {children}
             </div>
           </main>

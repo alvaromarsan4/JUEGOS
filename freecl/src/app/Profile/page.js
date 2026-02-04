@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '@/context/AuthContext';
-import { getFavorites, updateProfile, getUserReviews, deleteReview } from "@/services/api"; 
+import { getFavorites, updateProfile, getUserReviews, deleteReview } from "@/services/api";
 import GameCard from "@/components/GameCard";
 
 // ... (El array AVAILABLE_AVATARS se mantiene igual) ...
@@ -34,15 +34,15 @@ const AVAILABLE_AVATARS = [
 
 const ProfilePage = () => {
   const { user, setUser } = useContext(AuthContext);
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [activeTab, setActiveTab] = useState('favoritos');
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
-  
+
   const [favGames, setFavGames] = useState([]);
-  const [userReviews, setUserReviews] = useState([]); 
+  const [userReviews, setUserReviews] = useState([]);
 
   // --- 1. NUEVO: ESTADO DE NOTIFICACIÓN ---
   const [notification, setNotification] = useState({ type: '', message: '' });
@@ -51,16 +51,16 @@ const ProfilePage = () => {
   const showNotification = (type, msg) => {
     setNotification({ type, message: msg });
     setTimeout(() => {
-        setNotification({ type: '', message: '' });
+      setNotification({ type: '', message: '' });
     }, 4000); // Se borra a los 4 segundos
   };
 
   const [formData, setFormData] = useState({
-    name: '',     
-    email: '',    
-    description: '', 
-    age: '', 
-    gender: '', 
+    name: '',
+    email: '',
+    description: '',
+    age: '',
+    gender: '',
     profileImage: ''
   });
 
@@ -69,12 +69,12 @@ const ProfilePage = () => {
       setFormData({
         name: user.name || '',
         email: user.email || '',
-        description: user.description || '', 
-        age: user.age || '', 
-        gender: user.gender || '', 
+        description: user.description || '',
+        age: user.age || '',
+        gender: user.gender || '',
         profileImage: user.profileImage || 'https://placehold.co/150'
       });
-      fetchData(); 
+      fetchData();
     }
   }, [user]);
 
@@ -85,7 +85,7 @@ const ProfilePage = () => {
       setFavGames(favData);
 
       const reviewsRes = await getUserReviews();
-      const reviewsData = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.data || []); 
+      const reviewsData = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.data || []);
       setUserReviews(reviewsData);
 
     } catch (error) {
@@ -99,7 +99,7 @@ const ProfilePage = () => {
     // Mantenemos confirm nativo porque reemplazarlo requiere un modal complejo,
     // pero el resultado lo mostramos con la notificación bonita.
     if (!confirm("¿Seguro que quieres borrar esta reseña?")) return;
-    
+
     // Limpiamos notificación previa
     setNotification({ type: '', message: '' });
 
@@ -140,7 +140,7 @@ const ProfilePage = () => {
         const updatedUser = { ...user, ...res.user, ...formData };
         setUser(updatedUser);
         sessionStorage.setItem('pg_user', JSON.stringify(updatedUser));
-        
+
         setIsEditing(false);
         // CAMBIO: Notificación visual Verde
         showNotification('success', "¡Perfil actualizado con éxito!");
@@ -157,142 +157,141 @@ const ProfilePage = () => {
     }
   };
 
-  if (!user) return <div className="text-white text-center mt-20">Cargando perfil...</div>;
+  if (!user) return <div className="text-foreground text-center mt-20">Cargando perfil...</div>;
 
   return (
-    <div className="min-h-screen bg-[#0a0c10] text-white pb-20 px-4">
+    <div className="bg-background text-foreground pb-20 px-4 h-full">
       <div className="max-w-4xl mx-auto pt-10">
 
         {/* --- 3. NUEVO: BLOQUE DE NOTIFICACIÓN VISUAL --- */}
         {notification.message && (
-            <div className={`p-4 mb-6 rounded-lg border backdrop-blur-sm animate-fade-in-down font-semibold text-center shadow-lg transition-all duration-300 ${
-                notification.type === 'success' 
-                    ? 'bg-green-500/10 border-green-500/50 text-green-400 shadow-green-900/20' 
-                    : 'bg-red-500/10 border-red-500/50 text-red-400 shadow-red-900/20'
+          <div className={`p-4 mb-6 rounded-lg border backdrop-blur-sm animate-fade-in-down font-semibold text-center shadow-lg transition-all duration-300 ${notification.type === 'success'
+            ? 'bg-green-500/10 border-green-500/50 text-green-600 shadow-green-900/20'
+            : 'bg-red-500/10 border-red-500/50 text-red-600 shadow-red-900/20'
             }`}>
-                {notification.type === 'success' ? '✅ ' : '⚠️ '}
-                {notification.message}
-            </div>
+            {notification.type === 'success' ? '✅ ' : '⚠️ '}
+            {notification.message}
+          </div>
         )}
-        
+
         {/* TARJETA DE PERFIL (VISTA LECTURA / EDICIÓN) */}
-        <div className="bg-[#161b22] p-8 rounded-xl border border-gray-800 mb-8">
+        <div className="bg-card p-4 sm:p-8 rounded-xl border border-border mb-8 shadow-sm">
           {!isEditing ? (
             <div className="flex flex-col md:flex-row items-center gap-8">
-              <img 
-                src={formData.profileImage || "https://placehold.co/150"} 
-                alt="Profile" 
-                className="w-32 h-32 rounded-full border-4 border-blue-600 object-cover bg-gray-800" 
-                onError={(e) => { e.target.src = "https://placehold.co/150"; }} 
+              <img
+                src={formData.profileImage || "https://placehold.co/150"}
+                alt="Profile"
+                className="w-32 h-32 rounded-full border-4 border-primary object-cover bg-muted"
+                onError={(e) => { e.target.src = "https://placehold.co/150"; }}
               />
               <div className="flex-1 text-center md:text-left">
-                <h1 className="text-3xl font-bold">{formData.name}</h1>
-                <p className="text-gray-400 text-sm mb-2">{formData.email}</p>
-                <p className="text-gray-300 mt-2">{formData.description || "Sin descripción..."}</p>
-                
-                <div className="flex gap-4 mt-4 justify-center md:justify-start text-blue-400 text-sm">
-                  <span className="bg-blue-900/20 px-3 py-1 rounded-full border border-blue-800/30">🎂 {formData.age || '?'} años</span>
-                  <span className="bg-blue-900/20 px-3 py-1 rounded-full border border-blue-800/30">⚧ {formData.gender || '?'}</span>
+                <h1 className="text-3xl font-bold text-card-foreground">{formData.name}</h1>
+                <p className="text-muted-foreground text-sm mb-2">{formData.email}</p>
+                <p className="text-card-foreground mt-2">{formData.description || "Sin descripción..."}</p>
+
+                <div className="flex gap-4 mt-4 justify-center md:justify-start text-primary text-sm">
+                  <span className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">🎂 {formData.age || '?'} años</span>
+                  <span className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">⚧ {formData.gender || '?'}</span>
                 </div>
               </div>
-              <button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-lg font-bold transition-colors">
+              <button onClick={() => setIsEditing(true)} className="bg-primary hover:bg-blue-600 px-6 py-2 rounded-lg font-bold text-white transition-colors">
                 Editar Perfil
               </button>
             </div>
           ) : (
-             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="flex flex-col items-center gap-4 border-b border-gray-700 pb-6">
-                 <label className="text-xs text-gray-500 uppercase font-bold">Imagen de Perfil</label>
-                 <div className="flex items-center gap-4">
-                    <img src={formData.profileImage || "https://placehold.co/150"} alt="Preview" className="w-20 h-20 rounded-full border-2 border-blue-500 object-cover bg-gray-800"/>
-                    <button type="button" onClick={() => setShowAvatarSelector(!showAvatarSelector)} className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm transition-colors">
-                        {showAvatarSelector ? "Cerrar selección" : "Cambiar Avatar"}
-                    </button>
-                 </div>
-                 {showAvatarSelector && (
-                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 bg-[#0d1117] p-4 rounded border border-gray-700 mt-2">
-                        {AVAILABLE_AVATARS.map((avatarUrl, index) => (
-                            <img key={index} src={avatarUrl} alt={`Avatar ${index}`} onClick={() => selectAvatar(avatarUrl)} className={`w-12 h-12 rounded-full cursor-pointer border-2 transition-all hover:scale-110 object-cover bg-gray-800 ${formData.profileImage === avatarUrl ? 'border-blue-500' : 'border-transparent hover:border-gray-500'}`}/>
-                        ))}
-                    </div>
-                 )}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="flex flex-col items-center gap-4 border-b border-border pb-6">
+                <label className="text-xs text-muted-foreground uppercase font-bold">Imagen de Perfil</label>
+                <div className="flex items-center gap-4">
+                  <img src={formData.profileImage || "https://placehold.co/150"} alt="Preview" className="w-20 h-20 rounded-full border-2 border-primary object-cover bg-muted" />
+                  <button type="button" onClick={() => setShowAvatarSelector(!showAvatarSelector)} className="bg-muted hover:bg-slate-200 text-foreground px-4 py-2 rounded text-sm transition-colors border border-border">
+                    {showAvatarSelector ? "Cerrar selección" : "Cambiar Avatar"}
+                  </button>
+                </div>
+                {showAvatarSelector && (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 bg-muted p-4 rounded border border-border mt-2">
+                    {AVAILABLE_AVATARS.map((avatarUrl, index) => (
+                      <img key={index} src={avatarUrl} alt={`Avatar ${index}`} onClick={() => selectAvatar(avatarUrl)} className={`w-12 h-12 rounded-full cursor-pointer border-2 transition-all hover:scale-110 object-cover bg-white ${formData.profileImage === avatarUrl ? 'border-primary' : 'border-transparent hover:border-gray-400'}`} />
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="text-xs text-gray-500 uppercase font-bold">Nombre</label><input name="name" value={formData.name} onChange={handleChange} className="w-full bg-[#0d1117] p-2 rounded border border-gray-700 outline-none focus:border-blue-500 text-white" required /></div>
-                <div><label className="text-xs text-gray-500 uppercase font-bold">Email</label><input name="email" type="email" value={formData.email} onChange={handleChange} className="w-full bg-[#0d1117] p-2 rounded border border-gray-700 outline-none focus:border-blue-500 text-white" required /></div>
-                <div><label className="text-xs text-gray-500 uppercase font-bold">Edad</label><input name="age" type="number" value={formData.age} onChange={handleChange} className="w-full bg-[#0d1117] p-2 rounded border border-gray-700 outline-none focus:border-blue-500 text-white" /></div>
-                <div><label className="text-xs text-gray-500 uppercase font-bold">Género</label><select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-[#0d1117] p-2 rounded border border-gray-700 outline-none focus:border-blue-500 text-white"><option value="">Seleccionar...</option><option value="Masculino">Masculino</option><option value="Femenino">Femenino</option><option value="Otro">Otro</option></select></div>
-                <div className="md:col-span-2"><label className="text-xs text-gray-500 uppercase font-bold">Descripción</label><textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-[#0d1117] p-2 rounded border border-gray-700 outline-none focus:border-blue-500 text-white resize-none" rows="3" /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Nombre</label><input name="name" value={formData.name} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" required /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Email</label><input name="email" type="email" value={formData.email} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" required /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Edad</label><input name="age" type="number" value={formData.age} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Género</label><select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground"><option value="">Seleccionar...</option><option value="Masculino">Masculino</option><option value="Femenino">Femenino</option><option value="Otro">Otro</option></select></div>
+                <div className="md:col-span-2"><label className="text-xs text-muted-foreground uppercase font-bold">Descripción</label><textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground resize-none" rows="3" /></div>
               </div>
               <div className="flex gap-2">
-                <button type="submit" disabled={updating} className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-bold transition-colors disabled:opacity-50">{updating ? "Guardando..." : "Guardar Cambios"}</button>
-                <button type="button" onClick={() => setIsEditing(false)} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded font-bold transition-colors">Cancelar</button>
+                <button type="submit" disabled={updating} className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-bold text-white transition-colors disabled:opacity-50">{updating ? "Guardando..." : "Guardar Cambios"}</button>
+                <button type="button" onClick={() => setIsEditing(false)} className="bg-muted hover:bg-slate-200 text-foreground px-4 py-2 rounded font-bold transition-colors border border-border">Cancelar</button>
               </div>
             </form>
           )}
         </div>
 
         {/* TABS DE FAVORITOS / RESEÑAS */}
-        <div className="flex border-b border-gray-800 mb-6 bg-[#161b22] rounded-t-xl">
-          <button onClick={() => setActiveTab('favoritos')} className={`flex-1 py-4 font-bold ${activeTab === 'favoritos' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}>
+        <div className="flex border-b border-border bg-card rounded-t-xl overflow-hidden">
+          <button onClick={() => setActiveTab('favoritos')} className={`flex-1 py-3 sm:py-4 text-sm sm:text-base font-bold transition-colors ${activeTab === 'favoritos' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-muted-foreground hover:bg-muted'}`}>
             ❤️ Favoritos ({visibleFavorites.length})
           </button>
-          <button onClick={() => setActiveTab('resenas')} className={`flex-1 py-4 font-bold ${activeTab === 'resenas' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-500'}`}>
+          <button onClick={() => setActiveTab('resenas')} className={`flex-1 py-3 sm:py-4 text-sm sm:text-base font-bold transition-colors ${activeTab === 'resenas' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-muted-foreground hover:bg-muted'}`}>
             📝 Mis Reseñas ({userReviews.length})
           </button>
         </div>
 
-        <div className="bg-[#161b22] p-6 rounded-b-xl border border-t-0 border-gray-800 min-h-[200px]">
+        <div className="bg-card p-6 rounded-b-xl border border-t-0 border-border min-h-[200px]">
           {activeTab === 'favoritos' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {loading ? (
-                <p className="col-span-full text-center py-10">Cargando favoritos...</p>
+                <p className="col-span-full text-center py-10 text-muted-foreground">Cargando favoritos...</p>
               ) : visibleFavorites.length > 0 ? (
                 visibleFavorites.map(game => (
                   <GameCard key={game.id || game.external_id} game={game} />
                 ))
               ) : (
-                <p className="col-span-full text-center text-gray-500 py-10">Aún no tienes favoritos.</p>
+                <p className="col-span-full text-center text-muted-foreground py-10">Aún no tienes favoritos.</p>
               )}
             </div>
           ) : (
             <div className="grid gap-4">
-               {userReviews.length > 0 ? (
-                 userReviews.map((review) => (
-                    <div key={review.id} className="p-5 border border-gray-700 rounded-lg shadow-sm bg-[#0d1117] hover:border-blue-500/50 transition-colors relative group">
-                        {/* Botón de borrar */}
-                        <button 
-                            onClick={() => handleDeleteReview(review.id)}
-                            className="absolute top-4 right-4 text-gray-500 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Eliminar reseña"
-                        >
-                            🗑️
-                        </button>
+              {userReviews.length > 0 ? (
+                userReviews.map((review) => (
+                  <div key={review.id} className="p-5 border border-border rounded-lg shadow-sm bg-background hover:border-primary/50 transition-colors relative group">
+                    {/* Botón de borrar */}
+                    <button
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="absolute top-4 right-4 text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Eliminar reseña"
+                    >
+                      🗑️
+                    </button>
 
-                        <h2 className="font-bold text-lg text-blue-400 mb-1">
-                           {review.game ? review.game.title : "Juego no disponible"}
-                        </h2>
+                    <h2 className="font-bold text-lg text-primary mb-1">
+                      {review.game ? review.game.title : "Juego no disponible"}
+                    </h2>
 
-                        <div className="text-yellow-500 text-sm mb-2">
-                            {'★'.repeat(review.rating)}
-                            <span className="text-gray-600 ml-2 text-xs">({review.rating}/5)</span>
-                        </div>
-
-                        <p className="italic text-gray-300 mb-3 bg-gray-800/50 p-3 rounded border border-gray-800">
-                            "{review.comment}"
-                        </p>
-
-                        <span className="text-xs text-gray-500 font-mono">
-                            Publicado el: {new Date(review.created_at).toLocaleDateString()}
-                        </span>
+                    <div className="text-yellow-500 text-sm mb-2">
+                      {'★'.repeat(review.rating)}
+                      <span className="text-muted-foreground ml-2 text-xs">({review.rating}/5)</span>
                     </div>
-                 ))
-               ) : (
-                 <div className="text-center py-12 border border-dashed border-gray-700 rounded-lg">
-                     <p className="text-gray-500 text-lg">Aún no has escrito ninguna reseña.</p>
-                     <p className="text-gray-600 text-sm mt-2">¡Ve a un juego y comparte tu opinión!</p>
-                 </div>
-               )}
+
+                    <p className="italic text-foreground mb-3 bg-muted/50 p-3 rounded border border-border">
+                      "{review.comment}"
+                    </p>
+
+                    <span className="text-xs text-muted-foreground font-mono">
+                      Publicado el: {new Date(review.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                  <p className="text-muted-foreground text-lg">Aún no has escrito ninguna reseña.</p>
+                  <p className="text-muted-foreground text-sm mt-2">¡Ve a un juego y comparte tu opinión!</p>
+                </div>
+              )}
             </div>
           )}
         </div>

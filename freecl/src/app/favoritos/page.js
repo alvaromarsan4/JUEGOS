@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useContext } from "react";
 import { AuthContext } from "@/context/AuthContext";
-import { getFavorites } from "@/services/api"; 
+import { getFavorites } from "@/services/api";
 import GameCard from "@/components/GameCard";
 import { useRouter } from "next/navigation";
 
@@ -15,18 +15,18 @@ export default function FavoritesPage() {
   useEffect(() => {
     // Si no hay usuario cargado aún, esperamos
     if (!user && !loading) {
-       // Opcional: router.push('/login');
+      // Opcional: router.push('/login');
     }
 
     const fetchFavs = async () => {
       try {
-        const res = await getFavorites(); 
-        
+        const res = await getFavorites();
+
         let data = [];
         if (Array.isArray(res)) {
-            data = res;
+          data = res;
         } else if (res.data) {
-            data = res.data;
+          data = res.data;
         }
 
         setGames(data);
@@ -40,7 +40,7 @@ export default function FavoritesPage() {
     if (user) {
       fetchFavs();
     } else {
-        setTimeout(() => setLoading(false), 1000);
+      setTimeout(() => setLoading(false), 1000);
     }
   }, [user]); // Se recarga si cambia el usuario (login/logout)
 
@@ -55,25 +55,25 @@ export default function FavoritesPage() {
   });
 
   if (loading) {
-    return <div className="text-white text-center mt-20">Cargando tus favoritos...</div>;
+    return <div className="text-foreground text-center mt-20">Cargando tus favoritos...</div>;
   }
 
   if (!user) {
     return (
-        <div className="text-center mt-20 text-white">
-            <h1 className="text-2xl">Debes iniciar sesión</h1>
-        </div>
+      <div className="text-center mt-20 text-foreground">
+        <h1 className="text-2xl">Debes iniciar sesión</h1>
+      </div>
     );
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold text-white mb-6">Mis Favoritos ❤️</h1>
-      
+    <div className="p-8 max-w-7xl mx-auto bg-background text-foreground h-full">
+      <h1 className="text-3xl font-bold mb-6 text-foreground">Mis Favoritos ❤️</h1>
+
       {visibleGames.length === 0 ? (
-        <div className="text-center text-gray-400 mt-10">
-            <p className="text-xl">Aún no tienes juegos favoritos.</p>
-            <p className="text-sm mt-2">Ve al listado y añade algunos.</p>
+        <div className="text-center text-muted-foreground mt-10">
+          <p className="text-xl">Aún no tienes juegos favoritos.</p>
+          <p className="text-sm mt-2">Ve al listado y añade algunos.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

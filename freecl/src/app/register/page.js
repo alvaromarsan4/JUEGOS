@@ -12,7 +12,7 @@ export default function RegisterPage() {
     password: "",
     password_confirmation: "",
   });
-  
+
   // NUEVO: Estado para el token del Captcha
   const [captchaToken, setCaptchaToken] = useState(null);
   const recaptchaRef = useRef(null); // Para resetear el captcha si falla el registro
@@ -30,7 +30,7 @@ export default function RegisterPage() {
     setCaptchaToken(token);
     // Limpiamos error de captcha si existía
     if (errors?.captcha) {
-        setErrors(prev => ({ ...prev, captcha: null }));
+      setErrors(prev => ({ ...prev, captcha: null }));
     }
   };
 
@@ -42,9 +42,9 @@ export default function RegisterPage() {
 
     // NUEVO: Validación estricta del Captcha antes de enviar
     if (!captchaToken) {
-        setErrors({ general: "Por favor, completa el Captcha para verificar que no eres un robot." });
-        setLoading(false);
-        return;
+      setErrors({ general: "Por favor, completa el Captcha para verificar que no eres un robot." });
+      setLoading(false);
+      return;
     }
 
     try {
@@ -99,82 +99,82 @@ export default function RegisterPage() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white relative overflow-hidden p-4">
+    <div className="flex-grow w-full flex items-center justify-center bg-background text-foreground relative overflow-hidden p-4">
       {/* Luces */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -z-10"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] -z-10"></div>
 
-      <div className="w-full max-w-md bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-2xl shadow-2xl p-8 animate-fade-in-up">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold mb-2">Crear <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Cuenta</span></h2>
-          <p className="text-slate-400 text-sm">Únete a la comunidad de Project Games</p>
+      <div className="w-full max-w-md bg-card/90 backdrop-blur-md border border-border rounded-2xl shadow-xl p-6 animate-fade-in-up">
+        <div className="text-center mb-4">
+          <h2 className="text-3xl font-bold mb-1 text-card-foreground">Crear <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Cuenta</span></h2>
+          <p className="text-muted-foreground text-sm">Únete a la comunidad de Project Games</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {message && <div className="p-3 bg-green-500/10 border border-green-500/50 rounded-lg text-green-200 text-sm text-center">{message}</div>}
-          {errors && errors.general && <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-200 text-sm text-center">{errors.general}</div>}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {message && <div className="p-3 bg-green-500/10 border border-green-500/50 rounded-lg text-green-600 text-sm text-center">{message}</div>}
+          {errors && errors.general && <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-600 text-sm text-center">{errors.general}</div>}
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Nombre</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Nombre</label>
             <input type="text" placeholder="Tu nombre de usuario" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-slate-950 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" />
+              className="w-full px-4 py-2.5 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Email</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Email</label>
             <input type="email" placeholder="ejemplo@correo.com" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className={`w-full px-4 py-3 rounded-lg bg-slate-950 border ${errors?.email ? 'border-red-500' : 'border-slate-800'} text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all`} />
-            {errors?.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+              className={`w-full px-4 py-2.5 rounded-lg bg-background border ${errors?.email ? 'border-red-500' : 'border-border'} text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all`} />
+            {errors?.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
 
           {/* CONTRASEÑA */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Contraseña</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Contraseña</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••" required value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className={`w-full px-4 py-3 pr-10 rounded-lg bg-slate-950 border ${errors?.password ? 'border-red-500' : 'border-slate-800'} text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all`}
+                className={`w-full px-4 py-2.5 pr-10 rounded-lg bg-background border ${errors?.password ? 'border-red-500' : 'border-border'} text-foreground placeholder-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all`}
               />
               <EyeIcon visible={showPassword} onClick={() => setShowPassword(!showPassword)} />
             </div>
-            {errors?.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+            {errors?.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
 
           {/* CONFIRMAR CONTRASEÑA */}
           <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Confirmar Contraseña</label>
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Confirmar Contraseña</label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="••••••••" required value={form.password_confirmation}
                 onChange={(e) => setForm({ ...form, password_confirmation: e.target.value })}
-                className="w-full px-4 py-3 pr-10 rounded-lg bg-slate-950 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                className="w-full px-4 py-2.5 pr-10 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
               />
               <EyeIcon visible={showConfirmPassword} onClick={() => setShowConfirmPassword(!showConfirmPassword)} />
             </div>
           </div>
 
           {/* NUEVO: RECAPTCHA */}
-          <div className="flex justify-center pt-2">
+          <div className="flex justify-center pt-1 scale-90 origin-center">
             <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} // <--- PEGA TU CLAVE PÚBLICA AQUÍ
-                onChange={onCaptchaChange}
-                theme="dark" // Importante: Tema oscuro para tu diseño
+              ref={recaptchaRef}
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} // <--- PEGA TU CLAVE PÚBLICA AQUÍ
+              onChange={onCaptchaChange}
+              theme="light" // Importante: Tema claro
             />
           </div>
 
-          <div className="pt-2">
-            <button disabled={loading} className={`w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
+          <div className="pt-1">
+            <button disabled={loading} className={`w-full py-3 px-4 bg-primary hover:bg-blue-600 text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
               {loading ? 'Registrando...' : 'Crear Cuenta'}
             </button>
           </div>
         </form>
 
-        <div className="mt-6 text-center text-sm text-slate-400">
-          <p>¿Ya tienes cuenta? <Link href="/login" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">Inicia sesión aquí</Link></p>
+        <div className="mt-4 text-center text-sm text-muted-foreground">
+          <p>¿Ya tienes cuenta? <Link href="/login" className="text-primary hover:text-blue-500 font-semibold transition-colors">Inicia sesión aquí</Link></p>
         </div>
       </div>
     </div>
