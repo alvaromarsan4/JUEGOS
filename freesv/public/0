@@ -42,25 +42,7 @@
 [04-Feb-2026 08:29:46 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
 [04-Feb-2026 08:57:01 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
 [04-Feb-2026 08:57:01 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 08:35:59 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 08:35:59 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 09:03:36 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 09:03:36 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 09:18:28 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:18:28 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:18:36 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:18:36 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:20 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:20 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:20 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:21 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:26 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:26 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:27 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:27 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:54 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:31:54 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:32:03 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:32:04 Europe/Madrid] PHP Parse error:  syntax error, unexpected identifier " ", expecting ";" in C:\Users\alvaro.marsan.4\Desktop\Proyecto-Games\freesv\bootstrap\app.php on line 8
-[05-Feb-2026 09:43:50 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
-[05-Feb-2026 09:43:50 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
+[05-Feb-2026 10:34:37 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
+[05-Feb-2026 10:34:37 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0
+[05-Feb-2026 10:39:53 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_length INI setting is deprecated in Unknown on line 0
+[05-Feb-2026 10:39:53 Europe/Madrid] PHP Deprecated:  PHP Startup: session.sid_bits_per_character INI setting is deprecated in Unknown on line 0

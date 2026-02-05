@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="w-full bg-background text-foreground selection:bg-primary selection:text-white relative overflow-hidden flex flex-col justify-start items-center pt-10 pb-8">
+    <div className="w-full bg-background text-foreground selection:bg-primary selection:text-white relative overflow-hidden flex flex-col justify-start items-center pt-10 pb-8 h-full">
 
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] -z-10"></div>
@@ -43,7 +43,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-bold text-xl text-card-foreground">Rendimiento Óptimo</h3>
-                <p className="text-sm text-slate-400">Carga instantánea y filtros en tiempo real.</p>
+                <p className="text-sm text-muted-foreground">Carga instantánea y filtros en tiempo real.</p>
               </div>
             </div>
             <div className="flex items-center gap-4 mb-6">
@@ -52,7 +52,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-bold text-xl text-card-foreground">Comunidad Global</h3>
-                <p className="text-sm text-slate-400">Diseñado para jugadores de todo el mundo.</p>
+                <p className="text-sm text-muted-foreground">Diseñado para jugadores de todo el mundo.</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export default function AboutPage() {
               </div>
               <div>
                 <h3 className="font-bold text-xl text-card-foreground">100% Verificado</h3>
-                <p className="text-sm text-slate-400">Solo listamos juegos seguros y funcionales.</p>
+                <p className="text-sm text-muted-foreground">Solo listamos juegos seguros y funcionales.</p>
               </div>
             </div>
           </div>
@@ -75,19 +75,19 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="p-6 bg-card rounded-xl border border-border hover:border-blue-500 transition-colors group">
               <h3 className="text-xl font-bold text-card-foreground group-hover:text-blue-500">Next.js 14</h3>
-              <p className="text-sm text-slate-400 mt-2">App Router & Server Actions</p>
+              <p className="text-sm text-muted-foreground mt-2">App Router & Server Actions</p>
             </div>
             <div className="p-6 bg-card rounded-xl border border-border hover:border-purple-500 transition-colors group">
               <h3 className="text-xl font-bold text-card-foreground group-hover:text-purple-500">Laravel</h3>
-              <p className="text-sm text-slate-400 mt-2">API RESTful Robusta</p>
+              <p className="text-sm text-muted-foreground mt-2">API RESTful Robusta</p>
             </div>
             <div className="p-6 bg-card rounded-xl border border-border hover:border-cyan-500 transition-colors group">
               <h3 className="text-xl font-bold text-card-foreground group-hover:text-cyan-500">Tailwind CSS</h3>
-              <p className="text-sm text-slate-400 mt-2">Diseño Responsive y Moderno</p>
+              <p className="text-sm text-muted-foreground mt-2">Diseño Responsive y Moderno</p>
             </div>
             <div className="p-6 bg-card rounded-xl border border-border hover:border-yellow-500 transition-colors group">
               <h3 className="text-xl font-bold text-card-foreground group-hover:text-yellow-500">MySQL</h3>
-              <p className="text-sm text-slate-400 mt-2">Gestión de Datos Escalable</p>
+              <p className="text-sm text-muted-foreground mt-2">Gestión de Datos Escalable</p>
             </div>
           </div>
         </div>

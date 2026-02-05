@@ -35,39 +35,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex-grow w-full flex items-center justify-center bg-background text-foreground relative overflow-hidden p-4">
+    <div className="flex-grow flex items-center justify-center bg-background text-foreground relative overflow-hidden p-4 w-full h-full">
       {/* Luces */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-96 bg-blue-600/10 rounded-full blur-[100px] -z-10"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] -z-10"></div>
 
-      <div className="w-full max-w-md bg-card/90 backdrop-blur-md border border-border rounded-2xl shadow-xl p-6 animate-fade-in-up">
-        <div className="text-center mb-4">
-          <h2 className="text-3xl font-bold mb-1 text-card-foreground">Iniciar <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Sesión</span></h2>
+      <div className="w-full max-w-md bg-card backdrop-blur-md border border-border rounded-2xl shadow-2xl p-8 animate-fade-in-up">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold mb-2 text-card-foreground">Iniciar <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Sesión</span></h2>
           <p className="text-muted-foreground text-sm">Bienvenido de nuevo a Project Games</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {errors && (
-            <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-600 text-sm text-center">
+            <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-600 text-sm text-center font-medium">
               {errors.general && <span>{errors.general}</span>}
             </div>
           )}
-          <div className="space-y-1">
-            <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Correo Electrónico</label>
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium text-muted-foreground block">Correo Electrónico</label>
             <input type="email" id="email" placeholder="ejemplo@correo.com" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" />
+              className="w-full px-4 py-3 rounded-lg bg-background border border-input text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" />
           </div>
 
-          <div className="space-y-1">
-            <label htmlFor="password" className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Contraseña</label>
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium text-muted-foreground block">Contraseña</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="••••••••" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-4 py-3 pr-10 rounded-lg bg-background border border-border text-foreground placeholder-muted-foreground focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                className="w-full px-4 py-3 pr-10 rounded-lg bg-background border border-input text-foreground placeholder-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
               />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors p-1">
                 {showPassword ? (
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -82,12 +82,12 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className={`w-full py-3.5 px-4 bg-primary hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
+          <button type="submit" disabled={loading} className={`w-full py-3.5 px-4 bg-primary hover:bg-blue-700 text-primary-foreground font-bold rounded-lg shadow-lg shadow-blue-500/30 transform transition-all duration-200 hover:scale-[1.02] active:scale-95 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}>
             {loading ? 'Entrando...' : 'Entrar a mi cuenta'}
           </button>
         </form>
 
-        <div className="mt-4 text-center text-sm text-muted-foreground">
+        <div className="mt-8 text-center text-sm text-muted-foreground">
           <p>¿No tienes cuenta? <Link href="/register" className="text-primary hover:text-blue-600 font-semibold transition-colors">Regístrate gratis aquí</Link></p>
         </div>
       </div>

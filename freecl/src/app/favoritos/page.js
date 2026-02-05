@@ -55,24 +55,24 @@ export default function FavoritesPage() {
   });
 
   if (loading) {
-    return <div className="text-foreground text-center mt-20">Cargando tus favoritos...</div>;
+    return <div className="text-white text-center mt-20">Cargando tus favoritos...</div>;
   }
 
   if (!user) {
     return (
-      <div className="text-center mt-20 text-foreground">
+      <div className="text-center mt-20 text-white">
         <h1 className="text-2xl">Debes iniciar sesión</h1>
       </div>
     );
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto bg-background text-foreground h-full">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Mis Favoritos ❤️</h1>
+    <div className="p-8 h-full">
+      <h1 className="text-3xl font-bold text-primary mb-6">Mis Favoritos ❤️</h1>
 
       {visibleGames.length === 0 ? (
-        <div className="text-center text-muted-foreground mt-10">
-          <p className="text-xl">Aún no tienes juegos favoritos.</p>
+        <div className="text-center mt-10 p-12 bg-muted/20 rounded-xl border border-dashed border-border text-muted-foreground w-full">
+          <p className="text-xl font-semibold">Aún no tienes juegos favoritos.</p>
           <p className="text-sm mt-2">Ve al listado y añade algunos.</p>
         </div>
       ) : (

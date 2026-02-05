@@ -106,4 +106,3 @@ class ReviewController extends Controller
         return response()->json(['message' => 'Reseña eliminada']);
     }
 }
-

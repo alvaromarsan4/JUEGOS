@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends ApiRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Autorizar la petición

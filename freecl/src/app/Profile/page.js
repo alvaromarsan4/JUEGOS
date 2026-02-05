@@ -157,17 +157,17 @@ const ProfilePage = () => {
     }
   };
 
-  if (!user) return <div className="text-foreground text-center mt-20">Cargando perfil...</div>;
+  if (!user) return <div className="text-primary text-center mt-20 animate-pulse font-bold">Cargando perfil...</div>;
 
   return (
-    <div className="bg-background text-foreground pb-20 px-4 h-full">
-      <div className="max-w-4xl mx-auto pt-10">
+    <div className="bg-background text-foreground pb-20 px-4 h-full flex flex-col">
+      <div className="max-w-4xl mx-auto pt-10 w-full flex-grow">
 
         {/* --- 3. NUEVO: BLOQUE DE NOTIFICACIÓN VISUAL --- */}
         {notification.message && (
-          <div className={`p-4 mb-6 rounded-lg border backdrop-blur-sm animate-fade-in-down font-semibold text-center shadow-lg transition-all duration-300 ${notification.type === 'success'
-            ? 'bg-green-500/10 border-green-500/50 text-green-600 shadow-green-900/20'
-            : 'bg-red-500/10 border-red-500/50 text-red-600 shadow-red-900/20'
+          <div className={`p-4 mb-6 rounded-lg border backdrop-blur-sm animate-fade-in-down font-semibold text-center shadow-md transition-all duration-300 ${notification.type === 'success'
+              ? 'bg-green-500/10 border-green-500/50 text-green-600'
+              : 'bg-red-500/10 border-red-500/50 text-red-600'
             }`}>
             {notification.type === 'success' ? '✅ ' : '⚠️ '}
             {notification.message}
@@ -175,7 +175,7 @@ const ProfilePage = () => {
         )}
 
         {/* TARJETA DE PERFIL (VISTA LECTURA / EDICIÓN) */}
-        <div className="bg-card p-4 sm:p-8 rounded-xl border border-border mb-8 shadow-sm">
+        <div className="bg-card p-8 rounded-xl border border-border mb-8 shadow-sm">
           {!isEditing ? (
             <div className="flex flex-col md:flex-row items-center gap-8">
               <img
@@ -187,14 +187,14 @@ const ProfilePage = () => {
               <div className="flex-1 text-center md:text-left">
                 <h1 className="text-3xl font-bold text-card-foreground">{formData.name}</h1>
                 <p className="text-muted-foreground text-sm mb-2">{formData.email}</p>
-                <p className="text-card-foreground mt-2">{formData.description || "Sin descripción..."}</p>
+                <p className="text-foreground mt-2">{formData.description || "Sin descripción..."}</p>
 
                 <div className="flex gap-4 mt-4 justify-center md:justify-start text-primary text-sm">
                   <span className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">🎂 {formData.age || '?'} años</span>
                   <span className="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">⚧ {formData.gender || '?'}</span>
                 </div>
               </div>
-              <button onClick={() => setIsEditing(true)} className="bg-primary hover:bg-blue-600 px-6 py-2 rounded-lg font-bold text-white transition-colors">
+              <button onClick={() => setIsEditing(true)} className="bg-primary hover:bg-blue-600 text-primary-foreground px-6 py-2 rounded-lg font-bold transition-colors shadow-md">
                 Editar Perfil
               </button>
             </div>
@@ -204,44 +204,44 @@ const ProfilePage = () => {
                 <label className="text-xs text-muted-foreground uppercase font-bold">Imagen de Perfil</label>
                 <div className="flex items-center gap-4">
                   <img src={formData.profileImage || "https://placehold.co/150"} alt="Preview" className="w-20 h-20 rounded-full border-2 border-primary object-cover bg-muted" />
-                  <button type="button" onClick={() => setShowAvatarSelector(!showAvatarSelector)} className="bg-muted hover:bg-slate-200 text-foreground px-4 py-2 rounded text-sm transition-colors border border-border">
+                  <button type="button" onClick={() => setShowAvatarSelector(!showAvatarSelector)} className="bg-muted hover:bg-muted/80 text-foreground px-4 py-2 rounded text-sm transition-colors border border-border">
                     {showAvatarSelector ? "Cerrar selección" : "Cambiar Avatar"}
                   </button>
                 </div>
                 {showAvatarSelector && (
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 bg-muted p-4 rounded border border-border mt-2">
+                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 bg-muted/30 p-4 rounded border border-border mt-2">
                     {AVAILABLE_AVATARS.map((avatarUrl, index) => (
-                      <img key={index} src={avatarUrl} alt={`Avatar ${index}`} onClick={() => selectAvatar(avatarUrl)} className={`w-12 h-12 rounded-full cursor-pointer border-2 transition-all hover:scale-110 object-cover bg-white ${formData.profileImage === avatarUrl ? 'border-primary' : 'border-transparent hover:border-gray-400'}`} />
+                      <img key={index} src={avatarUrl} alt={`Avatar ${index}`} onClick={() => selectAvatar(avatarUrl)} className={`w-12 h-12 rounded-full cursor-pointer border-2 transition-all hover:scale-110 object-cover bg-background ${formData.profileImage === avatarUrl ? 'border-primary' : 'border-transparent hover:border-muted-foreground'}`} />
                     ))}
                   </div>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div><label className="text-xs text-muted-foreground uppercase font-bold">Nombre</label><input name="name" value={formData.name} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" required /></div>
-                <div><label className="text-xs text-muted-foreground uppercase font-bold">Email</label><input name="email" type="email" value={formData.email} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" required /></div>
-                <div><label className="text-xs text-muted-foreground uppercase font-bold">Edad</label><input name="age" type="number" value={formData.age} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground" /></div>
-                <div><label className="text-xs text-muted-foreground uppercase font-bold">Género</label><select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground"><option value="">Seleccionar...</option><option value="Masculino">Masculino</option><option value="Femenino">Femenino</option><option value="Otro">Otro</option></select></div>
-                <div className="md:col-span-2"><label className="text-xs text-muted-foreground uppercase font-bold">Descripción</label><textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-background p-2 rounded border border-border outline-none focus:border-primary text-foreground resize-none" rows="3" /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Nombre</label><input name="name" value={formData.name} onChange={handleChange} className="w-full bg-background p-2 rounded border border-input outline-none focus:border-primary text-foreground" required /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Email</label><input name="email" type="email" value={formData.email} onChange={handleChange} className="w-full bg-background p-2 rounded border border-input outline-none focus:border-primary text-foreground" required /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Edad</label><input name="age" type="number" value={formData.age} onChange={handleChange} className="w-full bg-background p-2 rounded border border-input outline-none focus:border-primary text-foreground" /></div>
+                <div><label className="text-xs text-muted-foreground uppercase font-bold">Género</label><select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-background p-2 rounded border border-input outline-none focus:border-primary text-foreground"><option value="">Seleccionar...</option><option value="Masculino">Masculino</option><option value="Femenino">Femenino</option><option value="Otro">Otro</option></select></div>
+                <div className="md:col-span-2"><label className="text-xs text-muted-foreground uppercase font-bold">Descripción</label><textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-background p-2 rounded border border-input outline-none focus:border-primary text-foreground resize-none" rows="3" /></div>
               </div>
               <div className="flex gap-2">
-                <button type="submit" disabled={updating} className="bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-bold text-white transition-colors disabled:opacity-50">{updating ? "Guardando..." : "Guardar Cambios"}</button>
-                <button type="button" onClick={() => setIsEditing(false)} className="bg-muted hover:bg-slate-200 text-foreground px-4 py-2 rounded font-bold transition-colors border border-border">Cancelar</button>
+                <button type="submit" disabled={updating} className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-bold transition-colors disabled:opacity-50 shadow-md">{updating ? "Guardando..." : "Guardar Cambios"}</button>
+                <button type="button" onClick={() => setIsEditing(false)} className="bg-muted hover:bg-muted/80 text-foreground px-4 py-2 rounded font-bold transition-colors border border-border">Cancelar</button>
               </div>
             </form>
           )}
         </div>
 
         {/* TABS DE FAVORITOS / RESEÑAS */}
-        <div className="flex border-b border-border bg-card rounded-t-xl overflow-hidden">
-          <button onClick={() => setActiveTab('favoritos')} className={`flex-1 py-3 sm:py-4 text-sm sm:text-base font-bold transition-colors ${activeTab === 'favoritos' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-muted-foreground hover:bg-muted'}`}>
+        <div className="flex border-b border-border mb-6 bg-card rounded-t-xl shadow-sm">
+          <button onClick={() => setActiveTab('favoritos')} className={`flex-1 py-4 font-bold transition-colors ${activeTab === 'favoritos' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
             ❤️ Favoritos ({visibleFavorites.length})
           </button>
-          <button onClick={() => setActiveTab('resenas')} className={`flex-1 py-3 sm:py-4 text-sm sm:text-base font-bold transition-colors ${activeTab === 'resenas' ? 'text-primary border-b-2 border-primary bg-primary/5' : 'text-muted-foreground hover:bg-muted'}`}>
+          <button onClick={() => setActiveTab('resenas')} className={`flex-1 py-4 font-bold transition-colors ${activeTab === 'resenas' ? 'text-primary border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'}`}>
             📝 Mis Reseñas ({userReviews.length})
           </button>
         </div>
 
-        <div className="bg-card p-6 rounded-b-xl border border-t-0 border-border min-h-[200px]">
+        <div className="bg-card p-6 rounded-b-xl border border-t-0 border-border min-h-[200px] shadow-sm">
           {activeTab === 'favoritos' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {loading ? (
@@ -251,7 +251,9 @@ const ProfilePage = () => {
                   <GameCard key={game.id || game.external_id} game={game} />
                 ))
               ) : (
-                <p className="col-span-full text-center text-muted-foreground py-10">Aún no tienes favoritos.</p>
+                <div className="col-span-full text-center py-12 bg-muted/20 rounded-xl border border-dashed border-border">
+                  <p className="text-muted-foreground">Aún no tienes favoritos.</p>
+                </div>
               )}
             </div>
           ) : (
@@ -277,7 +279,7 @@ const ProfilePage = () => {
                       <span className="text-muted-foreground ml-2 text-xs">({review.rating}/5)</span>
                     </div>
 
-                    <p className="italic text-foreground mb-3 bg-muted/50 p-3 rounded border border-border">
+                    <p className="italic text-foreground mb-3 bg-muted/20 p-3 rounded border border-border">
                       "{review.comment}"
                     </p>
 
@@ -287,7 +289,7 @@ const ProfilePage = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                <div className="text-center py-12 border border-dashed border-border rounded-lg bg-muted/20">
                   <p className="text-muted-foreground text-lg">Aún no has escrito ninguna reseña.</p>
                   <p className="text-muted-foreground text-sm mt-2">¡Ve a un juego y comparte tu opinión!</p>
                 </div>

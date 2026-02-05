@@ -105,21 +105,21 @@ export default function GameDetail({ params }) {
   };
 
   if (loading) return (
-    <div className="p-8 text-foreground max-w-6xl mx-auto bg-background min-h-screen">
-      <p className="text-blue-400 animate-pulse font-bold text-xl">Cargando detalles...</p>
+    <div className="p-8 text-foreground max-w-6xl mx-auto bg-background flex-grow flex items-center justify-center">
+      <p className="text-primary animate-pulse font-bold text-xl">Cargando detalles...</p>
     </div>
   );
 
   if (error) return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="flex-grow flex items-center justify-center bg-background">
       <p className="text-red-500 font-bold bg-red-500/10 p-4 rounded-lg border border-red-500">{error}</p>
     </div>
   );
 
-  if (!game) return <p className="text-white p-4 text-center">Juego no encontrado.</p>;
+  if (!game) return <p className="text-foreground p-4 text-center">Juego no encontrado.</p>;
 
   return (
-    <div className="p-8 text-foreground max-w-6xl mx-auto bg-background">
+    <div className="p-8 text-foreground max-w-6xl mx-auto bg-background h-full flex flex-col">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
         {/* IZQUIERDA: Información del Juego */}
@@ -141,13 +141,12 @@ export default function GameDetail({ params }) {
             <p><strong className="text-primary">Plataforma:</strong> <span className="text-card-foreground">{game.platform}</span></p>
             <p><strong className="text-primary">Desarrollador:</strong> <span className="text-card-foreground">{game.developer || 'N/A'}</span></p>
             <p><strong className="text-primary">Lanzamiento:</strong> <span className="text-card-foreground">{game.release_date || 'N/A'}</span></p>
-
-
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 bg-card p-6 rounded-xl border border-border shadow-md">
-            <p><strong className="text-primary" >Descripción:</strong></p>
-            <p><span className="text-card-foreground">{game.short_description}</span></p>
-          </div>
+
+          <h3 className="text-xl font-semibold mb-3 text-foreground">Descripción</h3>
+          <p className="text-foreground leading-relaxed text-lg">
+            {game.short_description}
+          </p>
         </div>
 
         {/* DERECHA: Sistema de Reseñas */}
@@ -161,8 +160,8 @@ export default function GameDetail({ params }) {
             {/* --- AQUÍ MUESTRO LA NOTIFICACIÓN --- */}
             {notification.message && (
               <div className={`p-3 mb-4 rounded-lg border text-sm font-semibold transition-all duration-300 ${notification.type === 'success'
-                ? 'bg-green-500/20 border-green-500 text-green-700'
-                : 'bg-red-500/20 border-red-500 text-red-700'
+                  ? 'bg-green-500/20 border-green-500 text-green-700 shadow-sm'
+                  : 'bg-red-500/20 border-red-500 text-red-700 shadow-sm'
                 }`}>
                 {notification.type === 'success' ? '✅ ' : '⚠️ '}
                 {notification.message}
@@ -179,8 +178,8 @@ export default function GameDetail({ params }) {
                       type="button"
                       onClick={() => setRating(num)}
                       className={`flex-1 py-2 rounded-lg border transition-all duration-300 ${rating >= num
-                        ? "bg-yellow-500/20 border-yellow-500 text-yellow-500 shadow-sm"
-                        : "bg-muted border-border text-muted-foreground hover:border-gray-500"
+                          ? "bg-yellow-500/20 border-yellow-500 text-yellow-500 shadow-sm"
+                          : "bg-muted border-border text-muted-foreground hover:border-border hover:bg-muted/80"
                         }`}
                     >
                       {num}★
@@ -194,7 +193,7 @@ export default function GameDetail({ params }) {
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full bg-background border border-border rounded-xl p-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-primary text-foreground transition-shadow"
+                  className="w-full bg-background border border-border rounded-xl p-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-primary text-foreground transition-shadow placeholder:text-muted-foreground/50"
                   placeholder="¿Qué tal la experiencia de juego?"
                   required
                 />
@@ -203,7 +202,7 @@ export default function GameDetail({ params }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-primary hover:bg-blue-600 disabled:bg-muted text-white font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-blue-500/30"
+                className="w-full bg-primary hover:bg-blue-600 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-bold py-3 rounded-xl transition-all transform active:scale-95 shadow-lg shadow-blue-500/20"
               >
                 {submitting ? "PROCESANDO..." : "PUBLICAR RESEÑA"}
               </button>
@@ -236,7 +235,7 @@ export default function GameDetail({ params }) {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 bg-muted/40 rounded-xl border border-dashed border-border">
+                  <div className="text-center py-8 bg-muted/20 rounded-xl border border-dashed border-border">
                     <p className="text-muted-foreground text-sm italic">Sin reseñas aún. ¡Sé el primero!</p>
                   </div>
                 )}
@@ -246,6 +245,6 @@ export default function GameDetail({ params }) {
         </div>
 
       </div>
-    </div >
+    </div>
   );
 }

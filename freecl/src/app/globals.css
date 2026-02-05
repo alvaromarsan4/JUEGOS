@@ -1,55 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  /* High Contrast Professional Theme */
-  /* Page Background: Clean Light */
+  /* --- LIGHT MODE (Default) --- */
   --background: #F8FAFC;
   /* Slate 50 */
   --foreground: #0F172A;
   /* Slate 900 */
 
-  /* Components: Professional Dark (Corporate Enterprise Look) */
-  --card: #1E293B;
-  /* Slate 800 */
-  --card-foreground: #F8FAFC;
-  /* Slate 50 */
+  /* White cards for professional clean look */
+  --card: #FFFFFF;
+  --card-foreground: #0F172A;
 
-  --popover: #1E293B;
-  --popover-foreground: #F8FAFC;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F172A;
 
   --primary: #2563EB;
   /* Blue 600 */
   --primary-foreground: #FFFFFF;
 
-  --muted: #334155;
-  /* Slate 700 - Darker mute for inside dark cards */
+  --muted: #F1F5F9;
+  /* Slate 100 */
+  --muted-foreground: #64748B;
+  /* Slate 500 */
+
+  --border: #E2E8F0;
+  /* Slate 200 */
+  --input: #E2E8F0;
+}
+
+/* --- DARK MODE (Class-based) --- */
+.dark {
+  --background: #020617;
+  /* Slate 950 */
+  --foreground: #F8FAFC;
+  /* Slate 50 */
+
+  --card: #1E293B;
+  /* Slate 800 */
+  --card-foreground: #F8FAFC;
+
+  --popover: #1E293B;
+  --popover-foreground: #F8FAFC;
+
+  --primary: #3B82F6;
+  /* Blue 500 (lighter for dark mode) */
+  --primary-foreground: #FFFFFF;
+
+  --muted: #1E293B;
+  /* Slate 800 */
   --muted-foreground: #94A3B8;
-  /* Slate 400 - Renewable text on dark */
+  /* Slate 400 */
 
-  --border: #CBD5E1;
-  /* Slate 300 - Visible on light, subtle on dark */
-  --input: #334155;
-  /* Dark input background */
+  --border: #334155;
+  /* Slate 700 */
+  --input: #1E293B;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Auto Dark Mode Overrides */
 
-    /* Page Background: Darkens to match the corporate dark vibe */
-    --background: #020617;
-    /* Slate 950 */
-    --foreground: #F8FAFC;
-    /* Slate 50 */
-
-    /* Cards: Stay dark, but border blends better */
-    --border: #334155;
-    /* Slate 700 */
-
-    /* Optional: Make cards slightly lighter or keep same to stand out from 950 background */
-    /* --card: #1E293B; (Kept same as default) */
-  }
-}
 
 @theme inline {
   --color-background: var(--background);

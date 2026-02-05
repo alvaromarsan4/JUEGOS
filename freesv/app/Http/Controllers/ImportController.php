@@ -57,4 +57,3 @@ class ImportController extends Controller
         ]);
     }
 }
-

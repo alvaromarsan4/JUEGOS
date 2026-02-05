@@ -9,12 +9,13 @@ export default function HomePage() {
   const [view, setView] = useState("home");
 
   return (
-    <div className="flex flex-col bg-background">
-      <main className="flex-grow max-w-7xl mx-auto p-6 text-foreground w-full">
+
+    <div className="flex flex-col h-full items-center justify-center bg-background flex-grow w-full">
+      <main className="flex-grow max-w-7xl mx-auto p-6 text-foreground w-full flex flex-col items-center justify-center">
 
         {/* --- VISTA DE JUEGOS --- */}
         <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
+          <h1 className="text-5xl md:text-6xl font-black mb-6 bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text drop-shadow-sm">
             Bienvenido a Project Games
           </h1>
 
@@ -26,13 +27,13 @@ export default function HomePage() {
 
           <a
             href="/games" // <--- Redirección directa a la ruta que maneja api.php
-            className="px-8 py-4 bg-primary hover:bg-blue-700 text-primary-foreground font-bold rounded-full text-lg transition-all transform hover:scale-105 shadow-lg shadow-blue-500/30 inline-block"
+            className="px-8 py-4 bg-primary hover:bg-blue-700 text-primary-foreground font-bold rounded-full text-lg transition-all transform hover:scale-105 shadow-xl shadow-blue-500/30 inline-block"
           >
             Ver el Catálogo de Juegos 🚀
           </a>
 
           {/* Decoración visual sencilla */}
-          <div className="mt-16 flex gap-8 opacity-40 grayscale">
+          <div className="mt-16 flex gap-8 opacity-20 grayscale">
             <span className="text-6xl">🎮</span>
             <span className="text-6xl">🕹️</span>
             <span className="text-6xl">👾</span>
@@ -43,4 +44,5 @@ export default function HomePage() {
 
     </div>
   );
+
 }

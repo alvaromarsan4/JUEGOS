@@ -2,17 +2,19 @@
 
 export default function Filters({ onFilter }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center w-full">
-      <input
-        type="search"
-        placeholder="Buscar por nombre..."
-        className="w-full sm:w-auto border border-border rounded-lg px-4 py-2 text-card-foreground bg-card placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-        onChange={(e) => onFilter("title", e.target.value)}
-      />
+    <div className="flex flex-col md:flex-row gap-4 w-full bg-card p-4 rounded-xl border border-border mt-4 mb-4">
+      <div className="relative flex-grow">
+        <input
+          type="search"
+          placeholder="Buscar por nombre..."
+          className="w-full bg-muted text-foreground border border-input rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          onChange={(e) => onFilter("title", e.target.value)}
+        />
+      </div>
 
       <select
+        className="w-full md:w-auto bg-muted text-foreground border border-input rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
         onChange={(e) => onFilter("platform", e.target.value)}
-        className="w-full sm:w-auto border border-border rounded-lg px-4 py-2 text-card-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         <option value="">Plataforma</option>
         <option value="pc">PC</option>
@@ -20,8 +22,8 @@ export default function Filters({ onFilter }) {
       </select>
 
       <select
+        className="w-full md:w-auto bg-muted text-foreground border border-input rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
         onChange={(e) => onFilter("category", e.target.value)}
-        className="w-full sm:w-auto border border-border rounded-lg px-4 py-2 text-card-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         <option value="">Género</option>
         <option value="action">Action</option>

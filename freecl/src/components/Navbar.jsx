@@ -3,6 +3,7 @@
 import Link from "next/link";
 import React, { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
@@ -11,10 +12,10 @@ export default function Navbar() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="w-full bg-card/90 backdrop-blur-md text-card-foreground shadow-sm sticky top-0 z-50 border-b border-slate-700">
+    <nav className="w-full bg-card text-card-foreground shadow-md sticky top-0 z-50 border-b border-border transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* CAMBIO AQUI: h-16 (64px) en móvil, h-20 (80px) en escritorio */}
-        <div className="flex items-center justify-between h-16 md:h-20">
+        {/* CAMBIO AQUI: h-20 (80px) para hacer la barra más alta */}
+        <div className="flex items-center justify-between h-20">
 
           {/* --- LOGO --- */}
           <div className="flex-shrink-0">
@@ -23,15 +24,15 @@ export default function Navbar() {
               onClick={closeMenu}
               className="flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
-              {/* CAMBIO AQUI: h-10 en móvil, h-14 en escritorio */}
+              {/* CAMBIO AQUI: h-16 (64px) para que el logo sea enorme */}
               <img
                 src="/logo.png"
                 alt="Logo Project Games"
-                className="h-10 md:h-14 w-auto object-contain"
+                className="h-18 w-auto object-contain"
               />
 
-              {/* CAMBIO AQUI: text-xl en móvil, text-2xl en escritorio */}
-              <span className="font-bold text-xl md:text-2xl hover:text-blue-400 transition-colors truncate max-w-[200px] md:max-w-none">
+              {/* CAMBIO AQUI: text-2xl para que el texto acompañe al tamaño del logo */}
+              <span className="font-bold text-2xl hover:text-primary transition-colors">
                 Project Games
               </span>
             </Link>
@@ -39,53 +40,56 @@ export default function Navbar() {
 
           {/* --- MENÚ DE ESCRITORIO --- */}
           <div className="hidden lg:flex items-center gap-6">
-            <Link href="/games" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/games" className="text-sm hover:text-primary transition-colors font-medium">
               Listado de juegos
             </Link>
 
             {user ? (
               <>
-                <Link href="/favoritos" className="text-sm font-medium flex items-center gap-1 hover:text-red-500 transition-colors">
+                <Link href="/favoritos" className="text-sm flex items-center gap-1 hover:text-red-500 transition-colors font-medium">
                   ❤️ Mis Favoritos
                 </Link>
 
                 <div className="h-4 w-px bg-border"></div>
 
-                <Link href="/Profile" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
+                <Link href="/Profile" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center">
                   <img
                     src="/perfil1.png"
                     alt="Perfil"
-                    className="h-6 w-6 object-contain mr-2 inline-block rounded-full"
+                    className="h-6 w-6 object-contain mr-2 inline-block rounded-full bg-muted"
                   />
                   {user.name}
                 </Link>
-                <Link href="/login">
+
                 <button
                   onClick={() => logout()}
                   className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
-                  
                 >
                   Cerrar sesión
                 </button>
-                </Link>
               </>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-medium hover:text-primary transition-colors">
+                <Link href="/login" className="text-sm hover:text-primary transition-colors font-medium">
                   🔑 Iniciar sesión
                 </Link>
-                <Link href="/register" className="text-sm font-medium bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors shadow-sm">
+                <Link href="/register" className="text-sm bg-primary hover:bg-blue-700 text-primary-foreground px-3 py-1 rounded transition-colors font-bold">
                   ➕ Registrarse
                 </Link>
               </>
             )}
+
+            {/* TOGGLE TEMA */}
+            <ThemeToggle />
           </div>
 
-          {/* --- BOTÓN HAMBURGUESA --- */}
-          <div className="flex lg:hidden items-center">
+          {/* --- MOBILE TOP BAR ACTIONS --- */}
+          <div className="flex lg:hidden items-center gap-4">
+            <ThemeToggle />
+            {/* BOTÓN HAMBURGUESA QUE HABÍAMOS QUITADO */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-muted-foreground hover:text-card-foreground focus:outline-none p-2"
+              className="text-muted-foreground hover:text-foreground focus:outline-none p-2"
             >
               <span className="sr-only">Abrir menú</span>
               {!isOpen ? (
@@ -102,42 +106,40 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* --- MENÚ MÓVIL DESPLEGABLE --- */}
+      {/* --- MENÚ MÓVIL DESPLEGABLE RESTAURADO --- */}
       {isOpen && (
-        <div className="lg:hidden bg-card border-t border-border shadow-lg">
-          <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col">
-            <Link href="/games" onClick={closeMenu} className="block py-2 text-sm font-medium hover:text-primary border-b border-border">
+        <div className="lg:hidden bg-card border-t border-border animate-fade-in-down shadow-xl">
+          <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col text-card-foreground">
+            <Link href="/games" onClick={closeMenu} className="block py-3 text-base font-medium hover:text-primary border-b border-border/50">
               Listado de Juegos
             </Link>
 
             {user ? (
               <>
-                <Link href="/favoritos" onClick={closeMenu} className="block py-2 text-sm font-medium hover:text-red-500">
+                <Link href="/favoritos" onClick={closeMenu} className="block py-3 text-base font-medium hover:text-red-500 border-b border-border/50">
                   ❤️ Mis Favoritos
                 </Link>
-                <Link href="/Profile" onClick={closeMenu} className="block py-2 text-sm text-primary font-bold hover:text-primary/80">
+                <Link href="/Profile" onClick={closeMenu} className="block py-3 text-base font-bold text-primary hover:text-primary/80 border-b border-border/50 flex items-center gap-2">
                   <img
                     src="/perfil1.png"
                     alt="Perfil"
-                    className="h-6 w-6 object-contain mr-2 inline-block rounded-full"
-                  /> ({user.name})
+                    className="h-6 w-6 object-contain rounded-full bg-muted"
+                  />
+                  {user.name}
                 </Link>
-                <Link href="/login">
                 <button
                   onClick={() => { logout(); closeMenu(); }}
-                  className="w-full text-left py-2 text-sm text-red-400 hover:text-red-300 font-bold"
-                 
+                  className="w-full text-left py-3 text-base text-red-500 hover:text-red-600 font-bold"
                 >
                   Cerrar sesión
                 </button>
-                </Link>
               </>
             ) : (
               <div className="mt-4 flex flex-col gap-3">
-                <Link href="/login" onClick={closeMenu} className="text-center py-2 border border-border rounded-full hover:bg-muted font-medium text-muted-foreground">
+                <Link href="/login" onClick={closeMenu} className="text-center py-2 border border-border rounded-lg hover:bg-muted text-foreground font-medium transition-colors">
                   🔑 Iniciar sesión
                 </Link>
-                <Link href="/register" onClick={closeMenu} className="text-center py-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 font-medium">
+                <Link href="/register" onClick={closeMenu} className="text-center py-2 bg-primary text-primary-foreground rounded-lg hover:bg-blue-700 font-bold transition-colors">
                   ➕ Registrarse
                 </Link>
               </div>
@@ -145,6 +147,7 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
     </nav>
   );
 }
