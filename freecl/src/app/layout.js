@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BottomNav from "@/components/BottomNav";
+
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
             <Footer />
 
             {/* BOTTOM NAV: MOBILE ONLY */}
-            <BottomNav />
+            
 
           </AuthProvider>
         </ThemeProvider>
