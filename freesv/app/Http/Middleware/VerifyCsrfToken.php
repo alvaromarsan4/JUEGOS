@@ -1,19 +1,23 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class VerifyCsrfToken extends Middleware
+class ApiRequest extends FormRequest
 {
     /**
-     * The URIs that should be excluded from CSRF verification.
-     * We'll exclude API prefixed routes so our SPA can POST without a CSRF token.
-     * In production consider a safer approach (Sanctum / CSRF token exchange).
-     *
-     * @var array<int, string>
+     * Fuerza respuesta JSON en errores de validación.
      */
-    protected $except = [
-        'api/*',
-    ];
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'Validation errors',
+            'errors' => $errors,
+        ], 422));
+    }
 }

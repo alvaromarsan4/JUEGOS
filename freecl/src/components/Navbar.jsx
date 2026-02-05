@@ -59,13 +59,15 @@ export default function Navbar() {
                   />
                   {user.name}
                 </Link>
-
+                <Link href="/login">
                 <button
                   onClick={() => logout()}
                   className="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition-colors"
+                  
                 >
                   Cerrar sesión
                 </button>
+                </Link>
               </>
             ) : (
               <>
@@ -120,12 +122,15 @@ export default function Navbar() {
                     className="h-6 w-6 object-contain mr-2 inline-block rounded-full"
                   /> ({user.name})
                 </Link>
+                <Link href="/login">
                 <button
                   onClick={() => { logout(); closeMenu(); }}
                   className="w-full text-left py-2 text-sm text-red-400 hover:text-red-300 font-bold"
+                 
                 >
                   Cerrar sesión
                 </button>
+                </Link>
               </>
             ) : (
               <div className="mt-4 flex flex-col gap-3">
